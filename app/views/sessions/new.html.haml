@@ -1,0 +1,46 @@
+.login-container.lightmode
+  .login-box.animated.fadeInDown
+    .login-logo
+    .login-body
+      .login-title
+        %strong Log In
+        to your account
+      .form.form-horizontal
+        = form_for(:session, url: login_path) do |f|
+          .form-group
+            .col-md-12
+              = f.email_field :email, class: "form-control", placeholder: "Email"
+          .form-group
+            .col-md-12
+              = f.password_field :password, class: "form-control", placeholder: "Password"
+          .form-group
+            .col-md-6
+              %a.btn.btn-link.btn-block{:href => "#"} Forgot your password?
+            .col-md-6
+              = f.submit "Log in", class: "btn btn-primary"
+        .login-or OR
+        .form-group
+          .col-md-4
+            %button.btn.btn-info.btn-block.btn-twitter
+              %span.fa.fa-twitter
+              Twitter
+          .col-md-4
+            %button.btn.btn-info.btn-block.btn-facebook
+              %span.fa.fa-facebook
+              Facebook
+          .col-md-4
+            %button.btn.btn-info.btn-block.btn-google
+              %span.fa.fa-google-plus
+              Google
+        .login-subtitle
+          Don't have an account yet?
+          %a{:href => "#"} Create an account
+    .login-footer
+      .pull-left
+        © 2016 Mini Social Networking
+      .pull-right
+        %a{:href => "#"} About
+        |
+        %a{:href => "#"} Privacy
+        |
+        %a{:href => "#"} Contact Us

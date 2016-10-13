@@ -245,7 +245,7 @@ body {
   padding-right: 50px;
 }
 body.page-container-boxed {
-  background: url("../img/backgrounds/wall_1.jpg") left top no-repeat fixed;
+  background: asset_url("wall_1.jpg") left top no-repeat fixed;
   padding: 20px 0px;
 }
 body.page-container-boxed .page-container {
@@ -3888,6 +3888,7 @@ background: #1caf9a !important;
   margin: 0px auto;
   top: 25%;
   position: inherit;
+  padding-top: 100px;
 }
 .login-container .login-box .login-logo {
   background: asset_url("logo.png") top center no-repeat;
@@ -3979,7 +3980,7 @@ background: #1caf9a !important;
   color: #FFF;
 }
 .login-container.lightmode {
-  background: url("../img/backgrounds/wall_1.jpg") left top no-repeat;
+  background: asset_url("wall_1.jpg") left top no-repeat;
 }
 .login-container.lightmode .login-box .login-body {
   background: rgba(255, 255, 255, 0.2);
