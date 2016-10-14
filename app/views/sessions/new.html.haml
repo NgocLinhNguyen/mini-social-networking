@@ -1,4 +1,4 @@
-.login-container.lightmode
+.login-container
   .login-box.animated.fadeInDown
     .login-logo
     .login-body
@@ -17,30 +17,7 @@
             .col-md-6
               %a.btn.btn-link.btn-block{:href => "#"} Forgot your password?
             .col-md-6
-              = f.submit "Log in", class: "btn btn-primary"
-        .login-or OR
-        .form-group
-          .col-md-4
-            %button.btn.btn-info.btn-block.btn-twitter
-              %span.fa.fa-twitter
-              Twitter
-          .col-md-4
-            %button.btn.btn-info.btn-block.btn-facebook
-              %span.fa.fa-facebook
-              Facebook
-          .col-md-4
-            %button.btn.btn-info.btn-block.btn-google
-              %span.fa.fa-google-plus
-              Google
+              = f.submit "Log in", class: "btn btn-info"
         .login-subtitle
           Don't have an account yet?
-          %a{:href => "#"} Create an account
-    .login-footer
-      .pull-left
-        © 2016 Mini Social Networking
-      .pull-right
-        %a{:href => "#"} About
-        |
-        %a{:href => "#"} Privacy
-        |
-        %a{:href => "#"} Contact Us
+          %a{ href: new_user_path } Create an account

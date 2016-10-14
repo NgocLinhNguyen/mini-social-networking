@@ -3878,7 +3878,7 @@ background: #1caf9a !important;
 .login-container {
   float: left;
   width: 100%;
-  min-height: 100%;
+  height: 650px;
   background: asset_url("login-bg.png") left top repeat #1b1e24;
   background-position: center center;
   background-size: cover;
