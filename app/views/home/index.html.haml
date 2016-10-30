@@ -407,10 +407,6 @@
         %p Press No if youwant to continue work. Press Yes to logout current user.
       .mb-footer
         .pull-right
-          %a.btn.btn-success.btn-lg{:href => "pages-login.html"} Yes
+          = link_to "Yes", logout_path, method: :delete, class: "btn btn-success btn-lg"
           %button.btn.btn-default.btn-lg.mb-control-close No
 / END MESSAGE BOX
-/ START PRELOADS
-%audio#audio-alert{:preload => "auto", :src => "audio/alert.mp3"}
-%audio#audio-fail{:preload => "auto", :src => "audio/fail.mp3"}
-

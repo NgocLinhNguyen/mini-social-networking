@@ -5,7 +5,6 @@
 //= require joli/js/plugins/fileinput/fileinput.min
 //= require joli/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.min
 //= require joli/js/plugins/icheck/icheck.min
-//= require joli/js/plugins/scrolltotop/scrolltopcontrol
 //= require joli/js/plugins/morris/raphael-min
 //= require joli/js/plugins/morris/morris.min
 //= require joli/js/plugins/rickshaw/d3.v3

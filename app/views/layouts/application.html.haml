@@ -5,12 +5,14 @@
     %meta{:content => "IE=edge", "http-equiv" => "X-UA-Compatible"}/
     %meta{:content => "width=device-width, initial-scale=1", :name => "viewport"}/
     %link{:href => "favicon.ico", :rel => "icon", :type => "image/x-icon"}/
-    %link#theme{:href => "css/theme-default.css", :rel => "stylesheet", :type => "text/css"}/
     %title MiniSocialNetworking
     = csrf_meta_tags
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
   %body
-    .page-container
-      = render "shared/header"
+    - if logged_in?
+      .page-container
+        = render "shared/header"
+        = yield
+    - else
       = yield
