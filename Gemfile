@@ -31,6 +31,9 @@ gem "bootstrap-sass", "~> 3.3"
 gem "haml-rails", "~> 0.9"
 gem "will_paginate", "~> 3.1"
 gem "bootstrap-will_paginate", "0.0.10"
+gem "carrierwave"
+gem "mini_magick"
+gem "fog"
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

@@ -24,4 +24,10 @@ class User < ApplicationRecord
     bcrypt = BCrypt::Password.new self.password_digest
     BCrypt::Engine.hash_secret(password, bcrypt.salt) == self.password_digest
   end
+
+  def avatar
+    if self.avatar_id.present?
+      return Image.find_by(id: self.avatar_id, status: "active")
+    end
+  end
 end
