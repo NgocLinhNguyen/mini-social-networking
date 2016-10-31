@@ -1,4 +1,8 @@
 class UsersController < ApplicationController
+  before_action :user_must_logged_in, only: [:index, :show, :edit, :update]
+  before_action :user_not_logged_in, only: [:new, :create]
+  before_action :user_must_be_current_user, only: [:edit, :update]
+
   def index
   end
 
@@ -18,6 +22,24 @@ class UsersController < ApplicationController
     else
       render "new"
     end
+  end
+
+  def edit
+    @user = User.find params[:id]
+  end
+
+  def update
+    @user = User.find params[:id]
+    if @user.avatar.present?
+      @user.avatar.update(status: "deleted")
+    end
+    image = Image.create(
+      picture: params[:user][:picture][0],
+      status: "active"
+    )
+    @user.update(avatar_id: image.id)
+    redirect_to @user
+    flash[:success] = "Success"
   end
 
   private

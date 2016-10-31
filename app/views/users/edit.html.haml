@@ -1,0 +1,28 @@
+%ul.breadcrumb
+  %li
+    %a{ href: "#" }
+      Home
+  %li.active
+    Update Profile
+.page-title
+  %h1
+    %span.fa.fa-edit
+    Update Profile
+.page-content-wrap
+  .row
+    .col-md-8
+      .panel.panel-default
+        .panel-body
+          %h4
+            %span.fa.fa-mail-forward
+            Update Your Information
+          .form-horizontal{ enctype: "multipart/form-data" }
+            = form_for @user do |f|
+              .form-group
+                .col-md-12
+                  .title
+                    Avatar
+                  = f.file_field :picture, multiple: true, class: "file"
+              .form-group
+                .col-md-12
+                  = f.submit "Save", class: "btn btn-success"

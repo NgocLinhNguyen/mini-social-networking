@@ -1,18 +1,28 @@
 !!!
-%html
+%html.body-full-height
   %head
-    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
-    %meta{:content => "IE=edge", "http-equiv" => "X-UA-Compatible"}/
-    %meta{:content => "width=device-width, initial-scale=1", :name => "viewport"}/
-    %link{:href => "favicon.ico", :rel => "icon", :type => "image/x-icon"}/
-    %title MiniSocialNetworking
+    %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type" }/
+    %meta{ :content => "IE=edge", "http-equiv" => "X-UA-Compatible" }/
+    %meta{ :content => "width=device-width, initial-scale=1", :name => "viewport" }/
+    = favicon_link_tag "logo_burned.png"
+    %title Super Ruby
     = csrf_meta_tags
-    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
-    = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
+    = stylesheet_link_tag    "application", media: "all", "data-turbolinks-track": "reload"
+    = javascript_include_tag "application", "data-turbolinks-track": "reload"
   %body
     - if logged_in?
-      .page-container
-        = render "shared/header"
-        = yield
+      = render "shared/header"
     - else
+      %body.login-container
+        #flash
+          - flash.each do |name,msg|
+            %div{ class: "alert alert-#{ name }" }
+              = msg
       = yield
+
+:javascript
+  $(document).ready(function(){
+    setTimeout(function(){
+      $("#flash").remove();
+    }, 5000);
+  })
