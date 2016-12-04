@@ -29,10 +29,11 @@
       %li.xn-title
         Navigation
       %li
-        %a{ href: "#" }
+        %a{ href: user_path(current_user) }
           %span.fa.fa-desktop
           %span.xn-text
-            DashBoard
+            = current_user.name
+
   .page-content
     %ul.x-navigation.x-navigation-horizontal.x-navigation-panel
       %li.xn-icon-button

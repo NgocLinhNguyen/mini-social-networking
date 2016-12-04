@@ -21,8 +21,28 @@
               .form-group
                 .col-md-12
                   .title
+                    Your name
+                  = f.text_field :name, class: "form-control", placeholder: @user.name
+              .form-group
+                .col-md-12
+                  .title
+                    Your phone_number
+                  = f.text_field :phone_number, class: "form-control", placeholder: @user.phone_number
+              .form-group
+                .col-md-12
+                  .title
+                    Your birthday
+                  = f.text_field :birthday, class: "form-control", placeholder: @user.birthday
+              .form-group
+                .col-md-12
+                  .title
                     Avatar
-                  = f.file_field :picture, multiple: true, class: "file"
+                  = f.file_field :avatar, multiple: false, class: "file"
+              .form-group
+                .col-md-12
+                  .title
+                    Cover
+                  = f.file_field :cover, multiple: false, class: "file"
               .form-group
                 .col-md-12
                   = f.submit "Save", class: "btn btn-success"

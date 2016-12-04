@@ -14,6 +14,9 @@ class User < ApplicationRecord
   validates_length_of :password, in: 8..20, on: :create
   validates_length_of :password, in: 8..20, allow_nil: true, on: :update
 
+  has_many :posts
+  has_many :comments
+
   def generate_password_digest
     if password.present?
       self.password_digest = BCrypt::Password.create(self.password, cost: 10)
@@ -28,6 +31,12 @@ class User < ApplicationRecord
   def avatar
     if self.avatar_id.present?
       return Image.find_by(id: self.avatar_id, status: "active")
+    end
+  end
+
+  def cover
+    if self.cover_id.present?
+      return Image.find_by(id: self.cover_id, status: "active")
     end
   end
 end

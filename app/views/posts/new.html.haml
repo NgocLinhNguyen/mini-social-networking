@@ -1,0 +1,22 @@
+%ul.breadcrumb
+  %li
+    %a{ href: "#" }
+      Home
+  %li.active
+    Post
+.page-title
+  %h1
+    %span.fa.fa-edit
+    New
+.page-content-wrap
+  .row
+    .col-md-6
+      .panel
+        .panel-primary
+          %h3.text-center Create New Post
+          .panel-body
+            = form_for @post, url: user_posts_path(user_id: current_user.id) do |f|
+              .form-group
+                = f.text_area :content, placeholder: "What's in your mind?", class: "form-control"
+              .form-group
+                = f.submit "Post", class: "btn btn-success"
