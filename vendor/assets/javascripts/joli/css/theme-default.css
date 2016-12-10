@@ -4011,18 +4011,8 @@ background: #1caf9a !important;
   padding: 0px;
   margin: 0px 0px 20px;
 }
-.timeline:before {
-  content: " ";
-  position: absolute;
-  width: 6px;
-  background: #FFF;
-  height: 100%;
-  left: 50%;
-  margin-left: -3px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-}
 .timeline .timeline-item {
-  width: 50%;
+  width: 100%;
   float: left;
   position: relative;
   clear: both;
@@ -4198,7 +4188,6 @@ background: #1caf9a !important;
 }
 .timeline.timeline-right .timeline-item {
   width: 100%;
-  padding-left: 210px;
 }
 .timeline.timeline-right .timeline-item.timeline-main {
   width: 160px;

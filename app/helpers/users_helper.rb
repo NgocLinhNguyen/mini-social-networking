@@ -8,7 +8,7 @@ module UsersHelper
 
   def user_not_logged_in
     if current_user.present?
-      redirect_to root_path
+      redirect_to home_path
       flash[:warning] = "You have logged in"
     end
   end
@@ -21,5 +21,10 @@ module UsersHelper
         flash[:warning] = "Permission denied!"
       end
     end
+  end
+
+  def is_current_user?
+    @user = User.find params[:id]
+    return @user.id == current_user.id
   end
 end
