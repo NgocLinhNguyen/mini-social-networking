@@ -16,6 +16,7 @@ class User < ApplicationRecord
 
   has_many :posts
   has_many :comments
+  has_many :user_groups
 
   def generate_password_digest
     if password.present?
