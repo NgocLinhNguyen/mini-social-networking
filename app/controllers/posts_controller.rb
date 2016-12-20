@@ -18,17 +18,33 @@ class PostsController < ApplicationController
   end
 
   def create
-    @post = Post.new(
-      content: params[:post][:content],
-      status: "active",
-      user_id: current_user.id
-    )
-    if @post.save
-      flash[:success] = "Create new post successfully"
-      redirect_to user_path(current_user)
+    if params[:group_id].present?
+      @group = Group.find params[:group_id]
+      @post = Post.new(
+        content: params[:post][:content],
+        status: "active",
+        user_id: current_user.id,
+        group_id: @group.id
+      )
+      if @post.save
+        flash[:success] = "Create new post successfully"
+      else
+        flash[:danger] = "error"
+      end
+      redirect_to group_path(@group)
     else
-      flash[:danger] = "error"
-      render "new"
+      @post = Post.new(
+        content: params[:post][:content],
+        status: "active",
+        user_id: current_user.id
+      )
+      if @post.save
+        flash[:success] = "Create new post successfully"
+        redirect_to user_path(current_user)
+      else
+        flash[:danger] = "error"
+        render "new"
+      end
     end
   end
 

@@ -9,11 +9,27 @@ class CommentsController < ApplicationController
       post_id: params[:post_id],
       status: "active"
     )
-    if @comment.save
-      flash[:success] = "Create your comment successfully"
-      redirect_to user_post_path(user_id: current_user.id, id: params[:post_id])
+    if params[:group_id].present?
+      @group = Group.find params[:group_id]
+
+      if @comment.save
+        flash[:success] = "Create your comment successfully"
+      else
+        flash[:success] = "Create your comment fail"
+      end
+      redirect_to group_path(@group)
     else
-      flash[:success] = "Create your comment fail"
+      @comment = Comment.new(
+        content: params[:comment][:content],
+        user_id: current_user.id,
+        post_id: params[:post_id],
+        status: "active"
+      )
+      if @comment.save
+        flash[:success] = "Create your comment successfully"
+      else
+        flash[:success] = "Create your comment fail"
+      end
       redirect_to user_post_path(user_id: current_user.id, id: params[:post_id])
     end
   end

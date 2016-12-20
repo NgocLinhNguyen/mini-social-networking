@@ -19,22 +19,33 @@
               %span.fa.fa-plus
               New Group
         .panel-body
-          %table.table.table-striped
-            %tr
-              - @groups.each do |group|
-                %td
-                  / = group.cover
-                %td
-                  = link_to "#{ group.name }", group_path(group)
-                  %p
-                    %small
-                      #{ group.user_groups.count } members
-                %td
-                  / - if current_user != group.id
-                  %a{ href: user_groups_path(user_id: current_user.id, group_id: group.id) }
-                    %button
-                      %span.fa.fa-plus
-                      Join
+          .row
+            - @groups.each do |group|
+              .col-md-4
+                .panel.panel-default{ style: "height: 80px" }
+                  %table
+                    %br
+                    %tr{ style: "padding-top: 10px !important;"}
+                      %td{ style: "width: 25%; padding-left: 10px;" }
+                        - if group.cover.present?
+                          %img.avatar-group{ src: "#{ group.cover.picture.cover }" }
+                        - else
+                          %img.avatar-group{ src: asset_path("group.png") }
+                      %td{ style: "width: 55%" }
+                        = link_to "#{ group.name }", group_path(group)
+                        %p
+                          %small
+                            #{ group.user_groups.count } members
+                      %td{ style: "width: 20%; padding-right: 10px;" }
+                        - if current_user.id == group.owner_id
+                          %a.btn.btn-info
+                            %span.fa.fa-bookmark
+                            Owner
+                        - else
+                          - if current_user.belong_to_group?(group)
+                            = link_to "Out Group", remove_user_from_group_path(group_id: group.id), method: :delete, class: "btn btn-danger"
+                          - else
+                            = link_to "Join", add_user_to_group_path(group_id: group.id), method: :post, class: "btn btn-success"
 #new_group.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "myModalLabel", :role => "dialog", :tabindex => "-1"}
   .modal-dialog{:role => "document"}
     .modal-content
@@ -53,8 +64,18 @@
             .form-group
               .col-md-12
                 .title
+                  Cover
+                = f.file_field :cover, multiple: false, class: "file"
+            .form-group
+              .col-md-12
+                .title
+                  Description
+                = f.text_field :description, class: "form-control"
+            .form-group
+              .col-md-12
+                .title
                   Select Privacy of Group
-                = f.select :kind, [["Protected", "protected"], ["Private", "private"], ["Public", "public"]], class: "btn btn-primary"
+                = f.select :kind, [["Public", "public"], ["Protected", "protected"], ["Private", "private"]], class: "btn btn-primary"
             .form-group
               .col-md-12
                 = f.submit "Save", class: "btn btn-success"

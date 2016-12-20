@@ -26,6 +26,8 @@ class User < ApplicationRecord
   has_many :following, through: :active_friends, source: :followed
   has_many :followers, through: :passive_friends
 
+  default_scope { where(status: "active")}
+
   def generate_password_digest
     if password.present?
       self.password_digest = BCrypt::Password.create(self.password, cost: 10)
@@ -49,6 +51,13 @@ class User < ApplicationRecord
     end
   end
 
+  def belong_to_group?(group)
+    user_group = UserGroup.find_by(group_id: group.id, user_id: self.id)
+    if user_group.present?
+      return true
+    end
+    return false
+  end
 
   # Follow a user
   def follow(other_user)
