@@ -16,11 +16,13 @@
   width: 25%;
   margin-top: -10px;
 }
+
 .user-name {
   font-size: 15px;
   font-weight: bold;
   color: #31A5D5;
 }
+
 .avatar-user {
   width: 30px;
   height: 30px;
@@ -51,4 +53,14 @@
 
 .hidden_like {
   display: none;
+}
+
+.background-group {
+  width: 100%;
+  height: 180px;
+}
+
+.avatar-group {
+  width: 50px;
+  height: 50px;
 }

@@ -37,8 +37,9 @@ ActiveRecord::Schema.define(version: 20161220084440) do
     t.string   "kind"
     t.string   "status"
     t.integer  "cover_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.string   "description"
   end
 
   create_table "images", force: :cascade do |t|
@@ -71,6 +72,10 @@ ActiveRecord::Schema.define(version: 20161220084440) do
     t.integer  "group_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string   "status"
+    t.index ["group_id"], name: "index_user_groups_on_group_id"
+    t.index ["user_id", "group_id"], name: "index_user_groups_on_user_id_and_group_id", unique: true
+    t.index ["user_id"], name: "index_user_groups_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|

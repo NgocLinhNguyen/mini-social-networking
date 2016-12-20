@@ -10,7 +10,6 @@ Rails.application.routes.draw do
     resources :posts do
       resources :comments
     end
-    resources :groups, only: :index
   end
 
   resources :likes
@@ -22,6 +21,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :user_groups
+  post "add_user_to_group", to: "user_groups#create"
+  delete "remove_user_from_group", to: "user_groups#destroy"
   resources :friends, only: [:index, :create, :update, :destroy]
 end

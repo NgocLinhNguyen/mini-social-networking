@@ -34,12 +34,12 @@
           %span.xn-text
             = current_user.name
       %li
-        %a{ href: groups_path }
+        %a{ href: groups_path(type: "all") }
           %span.fa.fa-desktop
           %span.xn-text
             All Groups
       %li
-        %a{ href: groups_path }
+        %a{ href: groups_path(type: "yours") }
           %span.fa.fa-desktop
           %span.xn-text
             Your Groups

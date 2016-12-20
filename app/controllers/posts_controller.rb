@@ -26,6 +26,7 @@ class PostsController < ApplicationController
   end
 
   def create
+<<<<<<< 9f0504fcef555268aa72952a60d427048ac43fcf
     if params[:post][:post_image].present?
       @image = Image.create(
         picture: params[:post][:post_image],
@@ -42,9 +43,35 @@ class PostsController < ApplicationController
     if @post.save
       flash[:success] = "Create new post successfully"
       redirect_to user_path(current_user)
+=======
+    if params[:group_id].present?
+      @group = Group.find params[:group_id]
+      @post = Post.new(
+        content: params[:post][:content],
+        status: "active",
+        user_id: current_user.id,
+        group_id: @group.id
+      )
+      if @post.save
+        flash[:success] = "Create new post successfully"
+      else
+        flash[:danger] = "error"
+      end
+      redirect_to group_path(@group)
+>>>>>>> Complete show, update, create, destroy group
     else
-      flash[:danger] = "error"
-      render "new"
+      @post = Post.new(
+        content: params[:post][:content],
+        status: "active",
+        user_id: current_user.id
+      )
+      if @post.save
+        flash[:success] = "Create new post successfully"
+        redirect_to user_path(current_user)
+      else
+        flash[:danger] = "error"
+        render "new"
+      end
     end
   end
 

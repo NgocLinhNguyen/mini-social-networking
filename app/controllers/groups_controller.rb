@@ -1,30 +1,41 @@
 class GroupsController < ApplicationController
   before_action :user_must_logged_in
-  before_action :owner_must_be_current_user, only: [:edit, :update, :destroy]
+  before_action :owner_must_be_current_user, only: [:update, :destroy]
 
   def index
-    @groups = Group.all
+    if params[:type] == "yours"
+      @groups = Group.yours(current_user)
+    else
+      @groups = Group.all
+    end
     @group = Group.new
   end
 
   def show
     @group = Group.find params[:id]
+    @owner = User.find @group.owner_id
     @posts = @group.posts.order(created_at: :desc)
-  end
-
-  def new
-    @group = Group.new
+    @post = Post.new(group_id: @group.id)
+    @comment = Comment.new
   end
 
   def create
     @group = Group.new(
       name: params[:group][:name],
       owner_id: current_user.id,
+      description: params[:group][:description],
       kind: params[:group][:kind],
       status: "active"
     )
     if @group.save
       @user_group = UserGroup.create(user_id: current_user.id, group_id: @group.id)
+      if params[:group][:cover].present?
+        cover = Image.create(
+          picture: params[:group][:cover],
+          status: "active"
+        )
+        @group.update(cover_id: cover.id)
+      end
       redirect_to group_path(@group)
       flash[:success] = "Create group successfully"
     else
@@ -32,18 +43,24 @@ class GroupsController < ApplicationController
     end
   end
 
-  def edit
-    @group = Group.find params[:id]
-  end
-
   def update
     @group = Group.find params[:id]
-    if params[:group][:name].present?
-      @group.update(name: params[:group][:name])
+    @group.update(
+      name: params[:group][:name],
+      description: params[:group][:description],
+      kind: params[:group][:kind]
+    )
+    if params[:group][:cover].present?
+      if @group.cover.present?
+        @group.cover.update(status: "deleted")
+      end
+      cover = Image.create(
+        picture: params[:group][:cover],
+        status: "active"
+      )
+      @group.update(cover_id: cover.id)
     end
-    if params[:group][:kind].present?
-      @group.update(kind: params[:group][:kind])
-    end
+    redirect_to group_path(@group)
   end
 
   def destroy
@@ -54,6 +71,7 @@ class GroupsController < ApplicationController
       else
         flash[:danger] = "Something went wrong"
       end
+      redirect_to groups_path
     end
   end
   private
