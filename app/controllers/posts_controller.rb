@@ -18,10 +18,18 @@ class PostsController < ApplicationController
   end
 
   def create
+    if params[:post][:post_image].present?
+      @image = Image.create(
+        picture: params[:post][:post_image],
+        status: "active"
+      )
+    end
     @post = Post.new(
       content: params[:post][:content],
       status: "active",
-      user_id: current_user.id
+      user_id: current_user.id,
+      image_id: @image.try(:id),
+      group_id: params[:group_id]
     )
     if @post.save
       flash[:success] = "Create new post successfully"

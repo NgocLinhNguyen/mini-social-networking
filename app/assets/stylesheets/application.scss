@@ -25,3 +25,30 @@
   width: 30px;
   height: 30px;
 }
+
+.post_image_preview {
+  display: none;
+  width: 200px;
+  height: 200px;
+  margin-bottom: 20px;
+}
+
+.post_image {
+  width: 100%
+}
+
+.text-muted {
+  color: #669999 !important;
+}
+
+.like {
+  color: #858585 !important;
+}
+
+.liked {
+  color: #5890FF !important;
+}
+
+.hidden_like {
+  display: none;
+}

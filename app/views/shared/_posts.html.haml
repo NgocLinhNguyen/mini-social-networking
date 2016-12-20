@@ -1,0 +1,176 @@
+- posts.each do |post|
+  .row
+    .col-md-12
+      .timeline.timeline-right
+        .timeline-item.timeline-item-right
+          .timeline-item-content
+            .timeline-heading
+              .user-name
+                - if @user.avatar.present?
+                  %img.avatar-user{ src: @user.avatar.picture.thumb }
+                - else
+                  %img.avatar-user{ src: asset_path("member.png") }
+                = post.user.name
+              = post.created_at.strftime("%F, %H:%M")
+            .timeline-body
+              %p
+                = post.content
+              - if post.image.present?
+                %img.post_image{ src: post.image.picture }
+            .timeline-footer
+              - if current_user.liked_post? post
+                = link_to likes_path(user_id: current_user.id, post_id: post.id), method: :post, remote: true, class: "like hidden_like" do
+                  %span.fa.fa-thumbs-up
+                  Like
+                = link_to like_path(id: "delete post", user_id: current_user.id, post_id: post.id), method: :delete, remote: true, class: "liked" do
+                  %span.fa.fa-thumbs-up
+                  Like
+              - else
+                = link_to likes_path(user_id: current_user.id, post_id: post.id), method: :post, remote: true, class: "like" do
+                  %span.fa.fa-thumbs-up
+                  Like
+                = link_to like_path(id: "delete post", user_id: current_user.id, post_id: post.id), method: :delete, remote: true, class: "liked hidden_like" do
+                  %span.fa.fa-thumbs-up
+                  Like
+              .pull-right
+                %a.read_more{ href: "#" }
+                  %span.fa.fa-comment
+                  %span#number_comment
+                    = post.comments.length
+                %a{ href: "#" }
+                  %span.fa.fa-thumbs-up
+                  %span#number_like
+                    = post.likes.length
+            .timeline-body.comments
+              .comment_preview
+                - post.comments.each do |comment|
+                  .comment-item
+                    - if comment.user.avatar.present?
+                      %img.avatar-user{ src: comment.user.avatar.picture.thumb }
+                    - else
+                      %img.avatar-user{ src: asset_path("member.png") }
+                    %p.comment-head
+                      = comment.user.name
+                    %p
+                      - if current_user.liked_comment? comment
+                        = link_to likes_path(user_id: current_user.id, comment_id: comment.id), method: :post, remote: true, class: "like hidden_like" do
+                          %span.fa.fa-thumbs-up
+                          Like
+                        = link_to like_path(id: "delete post", user_id: current_user.id, comment_id: comment.id), method: :delete, remote: true, class: "liked" do
+                          %span.fa.fa-thumbs-up
+                          Like
+                      - else
+                        = link_to likes_path(user_id: current_user.id, comment_id: comment.id), method: :post, remote: true, class: "like" do
+                          %span.fa.fa-thumbs-up
+                          Like
+                        = link_to like_path(id: "delete post", user_id: current_user.id, comment_id: comment.id), method: :delete, remote: true, class: "liked hidden_like" do
+                          %span.fa.fa-thumbs-up
+                          Like
+                      %span.fa.fa-diamond
+                      %a{ href: "#" }
+                        %span.fa.fa-thumbs-up
+                        %span#number_like
+                          = comment.likes.length
+                      %span.fa.fa-diamond
+                      %small.text-muted
+                        = comment.created_at.strftime("%F, %H:%M")
+                    %p
+                      = comment.content
+              .comment-write
+                .row
+                  .col-md-1
+                    - if current_user.avatar.present?
+                      %img.avatar-user{ src: current_user.avatar.picture.thumb }
+                    - else
+                      %img.avatar-user{ src: asset_path("member.png") }
+                  .col-md-11
+                    = form_for @comment, url: user_post_comments_path(user_id: current_user.id, post_id: post.id), remote: true do |f|
+                      .form-group.col-md-10
+                        = f.text_area :content, placeholder: "Write a comment", :rows => "1", class: "form-control"
+                      .form-group.col-md-2
+                        .pull-right
+                          = f.submit "Post", class: "btn btn-success"
+:javascript
+  $(".new_comment").on("ajax:success", function(e, data, status, xhr) {
+    var html = "<div class='comment-item'>";
+    if (data["avatar"] != undefined) {
+      html += "<img class='avatar-user', src=" + data["avatar"] + " />";
+    }
+    else {
+      html += "<img class='avatar-user', src=#{ asset_path('member.png') } />";
+    }
+    html += "<p class='comment-head'> " + data['user']['name'] + "</p>";
+    html += "<p>"
+    html += "<a class='like' data-remote='true' rel='nofollow' data-method='post' href='/likes?comment_id=" + data["comment"]["id"] + "&user_id=" + "#{ current_user.id }" + "'><span class='fa fa-thumbs-up'></span> Like</a>"
+    html += "<a class='liked hidden_like' data-remote='true' rel='nofollow' data-method='delete' href='/likes/delete%20post?comment_id=" + data["comment"]["id"] + "&user_id=" + "#{ current_user.id }" + "'><span class='fa fa-thumbs-up'></span> Like</a>"
+    html += "<span class='fa fa-diamond'></span>"
+    html += "<a href='#'> <span class='fa fa-thumbs-up'></span> <span id='number_like'> 0 </span> </a>"
+    html += "<span class='fa fa-diamond'></span>"
+    html += "<small class='text-muted'>" + data['create_time'] + "</small> </p>";
+    html += "<p>" + data['comment']['content'] + "</p>";
+    html += "</div>"
+    $(this).closest(".timeline-body.comments").children(".comment_preview").append(html);
+    $(this).find("textarea#comment_content").val("");
+    number_comment = $(this).closest(".timeline-item-content").find("#number_comment").text();
+    number_comment = parseInt(number_comment) + 1;
+    number_comment = $(this).closest(".timeline-item-content").find("#number_comment").text(number_comment);
+  }).on("ajax:error", function(e, xhr, status, error) {
+    $(this).append("<p>ERROR</p>");
+  });
+
+  $(".read_more").click(function(){
+    var element_need_handle = $(this).closest(".timeline-item-content").find(".comment_preview")
+    if (element_need_handle.css("display") == "none") {
+      $(this).closest(".timeline-item-content").find(".comment_preview").show();
+    } else {
+      $(this).closest(".timeline-item-content").find(".comment_preview").hide();
+    }
+  });
+
+  $(document).on("click",".like",function(){
+    $(".like").on("ajax:success", function(e, data, status, xhr) {
+      if (data["post"] == undefined) {
+        $(this).addClass("hidden_like")
+        $(this).closest("p").find(".liked").removeClass("hidden_like")
+        $(this).closest("p").find("#number_like").text(data["number_likes"])
+      } else {
+        $(this).addClass("hidden_like")
+        $(this).closest(".timeline-footer").find(".liked").removeClass("hidden_like")
+        $(this).closest(".timeline-footer").find("#number_like").text(data["number_likes"])
+      }
+    });
+  });
+
+  $(document).on("click",".liked",function(){
+    $(".liked").on("ajax:success", function(e, data, status, xhr) {
+      if (data["post"] == undefined) {
+        $(this).addClass("hidden_like")
+        $(this).closest("p").find(".like").removeClass("hidden_like")
+        $(this).closest("p").find("#number_like").text(data["number_likes"])
+      } else {
+        $(this).addClass("hidden_like")
+        $(this).closest(".timeline-footer").find(".like").removeClass("hidden_like")
+        $(this).closest(".timeline-footer").find("#number_like").text(data["number_likes"])
+      }
+    });
+  });
+
+  $("body").scroll(function () {
+    var nearToBottom = 100;
+    if (windowHasVerticalScrollbar) {
+      console.log(window.innerWidth.scrollTop());
+    }
+  });
+
+  function windowHasVerticalScrollbar () {
+    return window.innerWidth - document.documentElement.clientWidth > 0;
+  }
+
+  function posTop() {
+      return typeof window.pageYOffset != 'undefined' ? window.pageYOffset: document.documentElement.scrollTop? document.documentElement.scrollTop: document.body.scrollTop? document.body.scrollTop:0;
+  }
+
+  $("*").on('scroll', function() {
+    console.log($(this));
+  });
+
