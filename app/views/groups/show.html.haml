@@ -1,0 +1,32 @@
+/ %ul.breadcrumb
+/   %li
+/     %a{:href => "#"} Home
+/   %li
+/     %a{:href => "#"} Groups
+/ .page-title
+/   %h2
+/     %span.fa.fa-rss-square
+/     Groups
+/ .page-content-wrap
+/   .row
+/     .panel.panel-default
+/       .panel-heading
+/         %h3.panel-title
+/           Group
+/         .pull-right
+/           = link_to "New Group", new_group_path, class: "btn btn-info"
+/       .panel-body
+/         %table.table.table-striped
+/           %tr
+/             - @groups.each do |group|
+/               %td
+/                 = group.cover
+/               %td
+/                 = group.name
+/                 #{ group.users.count } members
+/               %td
+/                 - if current_user.group_id != group.id
+/                   %a{ href: user_groups_path(user_id: current_user.id, group_id: group.id) }
+/                     %button
+/                       %span.fa.fa-plus
+/                       Join

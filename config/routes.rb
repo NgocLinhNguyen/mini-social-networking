@@ -10,5 +10,15 @@ Rails.application.routes.draw do
     resources :posts do
       resources :comments
     end
+    resources :groups, only: :index
   end
+
+  resources :groups do
+    resources :posts do
+      resources :comments
+    end
+  end
+
+  resources :user_groups
+  resources :friends, only: [:index, :create, :update, :destroy]
 end

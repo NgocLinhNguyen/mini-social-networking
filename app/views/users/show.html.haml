@@ -8,7 +8,7 @@
   .row
     .col-md-3
       .panel.panel-build
-        .panel-body.profile{ style: "background-image: #{ @user.cover.picture.thumb }"}
+        .panel-body.profile
           .profile-image
             - if @user.avatar.present?
               %img{ src: @user.avatar.picture.thumb }
@@ -53,6 +53,20 @@
               %b
                 Birthday:
               = @user.birthday
+            .list-group-item
+              %b
+                #{ current_user.common_friend(@user) } common friends
+              .pull-right{ style: "margin-bottom: 10px;" }
+                - if current_user.following?(@user)
+                  - if @user.following?(current_user)
+                    = link_to "Unfriend", friend_path(user_id: @user.id, type: "Unfriend"), method: "delete", class: "btn btn-default"
+                  - else
+                    = link_to "Unfollow", friend_path(user_id: @user.id, type: "Unfollow"), method: "delete", class: "btn btn-default"
+                - else
+                  - if @user.following?(current_user)
+                    = link_to "Accept Friend", friend_path(user_id: @user.id), method: "patch", class: "btn btn-success"
+                  - else
+                    = link_to "Add Friend", friends_path(user_id: @user.id), method: "post", class: "btn btn-info"
     .col-md-9
       .row
         .col-md-12
@@ -60,7 +74,7 @@
             .panel-body
               %h3 What happened?
               .form-horizontal{:role => "form"}
-                = form_for @post, url: user_posts_path(user_id: current_user.id) do |f|
+                = form_for @post, url: user_posts_path(user_id: current_user.id), method: :post do |f|
                   .form-group
                     .col-md-12
                       .input-group
@@ -99,9 +113,9 @@
                     - post.comments.each do |comment|
                       .comment-item
                         - if @user.avatar.present?
-                          %img{ src: @user.avatar.picture.thumb }
+                          %img.avatar-user{ src: @user.avatar.picture.thumb }
                         - else
-                          %img{ src: asset_path("member.png") }
+                          %img.avatar-user{ src: asset_path("member.png") }
                         %p.comment-head
                           = comment.user.name
                         %p
@@ -112,7 +126,7 @@
                       .row
                         .col-md-1
                           - if current_user.avatar.present?
-                            %img{ src: current_user.avatar.picture.thumb }
+                            %img.avatar-user{ src: current_user.avatar.picture.thumb }
                           - else
                             %img.avatar-user{ src: asset_path("member.png") }
                         .col-md-11
@@ -196,43 +210,3 @@
   $("#birthday").click(function() {
     $("#change-birthday").modal("show");
   });
-
-
-#blueimp-gallery.blueimp-gallery.blueimp-gallery-controls
-  .slides
-  %h3.title
-  %a.prev ‹
-  %a.next ›
-  %a.close ×
-  %a.play-pause
-  %ol.indicator
-
-#mb-signout.message-box.animated.fadeIn{"data-sound" => "alert"}
-  .mb-container
-    .mb-middle
-      .mb-title
-        %span.fa.fa-sign-out
-        Log
-        %strong Out
-        ?
-      .mb-content
-        %p Are you sure you want to log out?
-        %p Press No if youwant to continue work. Press Yes to logout current user.
-      .mb-footer
-        .pull-right
-          %a.btn.btn-success.btn-lg{:href => "pages-login.html"} Yes
-          %button.btn.btn-default.btn-lg.mb-control-close No
-
-:javascript
-  document.getElementById('links').onclick = function (event) {
-      event = event || window.event;
-      var target = event.target || event.srcElement,
-          link = target.src ? target.parentNode : target,
-          options = {index: link, event: event,onclosed: function(){
-              setTimeout(function(){
-                  $("body").css("overflow","");
-              },200);
-          }},
-          links = this.getElementsByTagName('a');
-      blueimp.Gallery(links, options);
-  };
