@@ -1,6 +1,11 @@
 class GroupsController < ApplicationController
-  before_action :user_must_logged_in, only: [:show, :new, :create]
+  before_action :user_must_logged_in
   before_action :owner_must_be_current_user, only: [:edit, :update, :destroy]
+
+  def index
+    @groups = Group.all
+    @group = Group.new
+  end
 
   def show
     @group = Group.find params[:id]
@@ -19,7 +24,7 @@ class GroupsController < ApplicationController
       status: "active"
     )
     if @group.save
-      @user_group = UserGroup.create(user_id: current_user.id, group_id: @group.id)q
+      @user_group = UserGroup.create(user_id: current_user.id, group_id: @group.id)
       redirect_to group_path(@group)
       flash[:success] = "Create group successfully"
     else

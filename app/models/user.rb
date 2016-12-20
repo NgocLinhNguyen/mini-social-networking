@@ -18,6 +18,14 @@ class User < ApplicationRecord
   has_many :comments, dependent: :destroy
   has_many :likes, dependent: :destroy
   has_many :user_groups
+  has_many :active_friends, class_name:  "Friend",
+                            foreign_key: "follower_id",
+                            dependent:   :destroy
+  has_many :passive_friends, class_name:  "Friend",
+                            foreign_key: "followed_id",
+                            dependent:   :destroy
+  has_many :following, through: :active_friends, source: :followed
+  has_many :followers, through: :passive_friends
 
   def generate_password_digest
     if password.present?
@@ -50,5 +58,24 @@ class User < ApplicationRecord
   def liked_comment? comment
     like = Like.find_by(user_id: self.id, comment_id: comment.id)
     return like.present?
+  end
+
+  # Follow a user
+  def follow(other_user)
+    self.active_friends.create(followed_id: other_user.id)
+  end
+
+  # Unfollows a user.
+  def unfollow(other_user)
+    self.active_friends.find_by(followed_id: other_user.id).destroy
+  end
+
+  # Returns true if the current user is following the other user.
+  def following?(other_user)
+    self.following.include?(other_user)
+  end
+
+  def common_friend(other_user)
+    return (self.active_friends & other_user.active_friends).length
   end
 end

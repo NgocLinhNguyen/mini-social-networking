@@ -4,6 +4,6 @@ class Group < ApplicationRecord
 
   validates :name, presence: true
   validates :owner_id, presence: true
-  validates :kind, presence: true
+  validates :kind, presence: true, inclusion: { in: ["public", "private", "protected"] }
   validates :status, presence: true, inclusion: { in: ["active", "deleted"] }
 end

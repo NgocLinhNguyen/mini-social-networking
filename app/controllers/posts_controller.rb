@@ -43,6 +43,7 @@ class PostsController < ApplicationController
       flash[:success] = "Create new post successfully"
       redirect_to user_path(current_user)
     else
+      flash[:danger] = "error"
       render "new"
     end
   end
