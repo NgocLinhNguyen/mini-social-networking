@@ -117,4 +117,8 @@ class User < ApplicationRecord
     passive = self.friends_passive
     friends = active - (active - passive)
   end
+
+  def get_groups
+    Group.joins(:user_groups).where(user_groups: { user_id: id })
+  end
 end

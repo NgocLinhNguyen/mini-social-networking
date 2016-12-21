@@ -1,0 +1,31 @@
+%ul.breadcrumb
+  %li
+    %a{ href: "#" }
+      Home
+.page-content-wrap
+  .row
+    .col-md-9
+      .row
+        .col-md-12
+          = render "/shared/new_post", group_id: nil
+      = render "/shared/posts", posts: @posts
+    - unless @suggest.empty?
+      .col-md-3
+        .panel.panel-build
+          .panel-heading
+            %h3
+              Maybe you also know
+          .panel-body.list-group.list-group-contacts
+            - @suggest.each do |suggest_friend|
+              .list-group-item
+                - if suggest_friend.avatar.present?
+                  %img.pull-left{ src: suggest_friend.avatar.picture.profile_normal }
+                - else
+                  %img.pull-left{ src: asset_path("member.png")}
+                %span.contacts-title
+                  %a{ href: user_path(id: suggest_friend.id) }
+                    = suggest_friend.name
+                .pull-right
+                  = link_to "Add Friend", friends_path(user_id: suggest_friend.id), method: "post", class: "btn btn-info"
+                %p
+                  #{ current_user.common_friends(suggest_friend).length } mutual friends

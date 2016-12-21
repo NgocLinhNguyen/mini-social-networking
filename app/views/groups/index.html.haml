@@ -28,7 +28,7 @@
                     %tr{ style: "padding-top: 10px !important;"}
                       %td{ style: "width: 25%; padding-left: 10px;" }
                         - if group.cover.present?
-                          %img.avatar-group{ src: "#{ group.cover.picture.cover }" }
+                          %img.avatar-group{ src: "#{ group.cover.picture.thumb }" }
                         - else
                           %img.avatar-group{ src: asset_path("group.png") }
                       %td{ style: "width: 55%" }

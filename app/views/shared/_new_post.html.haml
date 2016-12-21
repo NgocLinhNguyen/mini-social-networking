@@ -2,7 +2,7 @@
   .panel-body
     %h3 What happened?
     .form-horizontal{:role => "form"}
-      = form_for @post, url: user_posts_path(user_id: current_user.id) do |f|
+      = form_for Post.new, url: user_posts_path(user_id: current_user.id, current_url: request.url) do |f|
         .form-group
           .col-md-12
             .input-group
