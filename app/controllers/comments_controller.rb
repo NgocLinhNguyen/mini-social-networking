@@ -20,25 +20,50 @@ class CommentsController < ApplicationController
       post_id: params[:post_id],
       status: "active"
     )
-    if @comment.save
-      if @comment.user.avatar.present?
-        @avatar = @comment.user.avatar.picture.thumb.url
-      end
-      @time = @comment.created_at.strftime("%F, %H:%M")
-      respond_to do |format|
-        format.html {
-          flash[:success] = "Create your comment successfully"
-          redirect_to user_post_path(user_id: current_user.id, id: params[:post_id])
-        }
-        format.json
+    if params[:group_id].present?
+      @group = Group.find params[:group_id]
+      if @comment.save
+        if @comment.user.avatar.present?
+          @avatar = @comment.user.avatar.picture.thumb.url
+        end
+        @time = @comment.created_at.strftime("%F, %H:%M")
+        respond_to do |format|
+          format.html {
+            flash[:success] = "Create your comment successfully"
+            redirect_to group_path(@group)
+          }
+          format.json
+        end
+      else
+        respond_to do |format|
+          format.html {
+            flash[:success] = "Create your comment fail"
+            redirect_to group_path(@group)
+          }
+          format.json { render json: ({ error: true }).to_json }
+        end
       end
     else
-      respond_to do |format|
-        format.html {
-          flash[:success] = "Create your comment fail"
-          redirect_to user_post_path(user_id: current_user.id, id: params[:post_id])
-        }
-        format.json { render json: ({ error: true }).to_json }
+      if @comment.save
+        if @comment.user.avatar.present?
+          @avatar = @comment.user.avatar.picture.thumb.url
+        end
+        @time = @comment.created_at.strftime("%F, %H:%M")
+        respond_to do |format|
+          format.html {
+            flash[:success] = "Create your comment successfully"
+            redirect_to user_post_path(user_id: current_user.id, id: params[:post_id])
+          }
+          format.json
+        end
+      else
+        respond_to do |format|
+          format.html {
+            flash[:success] = "Create your comment fail"
+            redirect_to user_post_path(user_id: current_user.id, id: params[:post_id])
+          }
+          format.json { render json: ({ error: true }).to_json }
+        end
       end
     end
   end

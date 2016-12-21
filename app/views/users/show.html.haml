@@ -53,6 +53,20 @@
               %b
                 Birthday:
               = @user.birthday
+            .list-group-item
+              %b
+                #{ current_user.common_friend(@user) } common friends
+              .pull-right{ style: "margin-bottom: 10px;" }
+                - if current_user.following?(@user)
+                  - if @user.following?(current_user)
+                    = link_to "Unfriend", friend_path(user_id: @user.id, type: "Unfriend"), method: "delete", class: "btn btn-default"
+                  - else
+                    = link_to "Unfollow", friend_path(user_id: @user.id, type: "Unfollow"), method: "delete", class: "btn btn-default"
+                - else
+                  - if @user.following?(current_user)
+                    = link_to "Accept Friend", friend_path(user_id: @user.id), method: "patch", class: "btn btn-success"
+                  - else
+                    = link_to "Add Friend", friends_path(user_id: @user.id), method: "post", class: "btn btn-info"
     .col-md-9
       .row
         .col-md-12

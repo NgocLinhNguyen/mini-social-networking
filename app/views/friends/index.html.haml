@@ -1,0 +1,57 @@
+%ul.breadcrumb
+  %li
+    %a{:href => "#"} Home
+  %li
+    %a{:href => "#"} Friends
+  %li.active Your Friends
+.page-title
+  %h2
+    %span.fa.fa-users
+    Friends
+.page-content-wrap
+  .row
+    .col-md-12
+      .panel.panel-default
+        .panel-heading
+          - @friends.each do |friend|
+            .col-md-3
+              .panel.panel-default
+                .panel-body.profile{ style: "background-color: #262626; " }
+                  .profile-image
+                    - if friend.avatar.present?
+                      %img{ src: friend.avatar.picture.thumb }
+                    - else
+                      %img{ src: asset_path("member.png") }
+                  .profile-data
+                    .profile-data-name
+                      = friend.name
+                    .profile-data-title
+                      = friend.email
+                  .profile-controls
+                    %a.profile-control-left{ href: user_path(friend) }
+                      %span.fa.fa-info
+                    %a.profile-control-right{ href: user_path(friend) }
+                      %span.fa.fa-phone
+                .panel-body
+                  .contact-info
+                    - if friend.phone_number.present?
+                      %p
+                        %small
+                          %i.fa.fa-phone
+                          Mobile
+                        %br
+                        = friend.phone_number
+                    - if friend.address.present?
+                      %p
+                        %small
+                          %i.fa.fa-envelope
+                          Address
+                        %br
+                        = friend.address
+                    - if friend.birthday.present?
+                      %p
+                        %small
+                          %i.fa.fa-bolt
+                          Birthday
+                        = friend.birthday
+          / = will_paginate @friends

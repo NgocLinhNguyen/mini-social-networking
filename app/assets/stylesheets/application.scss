@@ -16,11 +16,13 @@
   width: 25%;
   margin-top: -10px;
 }
+
 .user-name {
   font-size: 15px;
   font-weight: bold;
   color: #31A5D5;
 }
+
 .avatar-user {
   width: 30px;
   height: 30px;
@@ -51,4 +53,30 @@
 
 .hidden_like {
   display: none;
+}
+
+.background-group {
+  width: 100%;
+  height: 180px;
+}
+
+.group-cover {
+  width: 100%;
+  height: 200px;
+}
+
+.avatar-group {
+  width: 50px;
+  height: 50px;
+}
+.avatar-search {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+}
+table.table-user-search tr {
+  height: 100px;
+  border-bottom: 1px solid rgba(230, 225, 225, 0.82);
+  margin-top: 5px;
+  margin-bottom: 5px;
 }

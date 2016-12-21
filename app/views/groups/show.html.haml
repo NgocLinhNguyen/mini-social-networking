@@ -1,0 +1,200 @@
+%ul.breadcrumb
+  %li
+    %a{:href => "#"} Home
+  %li
+    %a{:href => "#"} Groups
+.page-title
+  %h2
+    %span.fa.fa-rss-square
+    = @group.name
+  .pull-right
+    .row
+      - if current_user.id == @group.owner_id
+        .col-md-6
+          %a.btn.btn-default#edit{ href: "#edit_group" }
+            %span.fa.fa-edit
+            Edit
+        .col-md-6
+          = link_to "Delete", group_path(@group), method: :delete, class: "btn btn-danger"
+.page-content-wrap
+  .row
+    .col-md-9
+      .panel.panel-default
+        - if @group.cover.present?
+          %img.group-cover{ src: @group.cover.picture.cover }
+        - else
+          %img.group-cover{ src: asset_path("group.png") }
+      .panel.panel-default
+        .panel-body
+          .row
+            .col-md-12
+              .panel.panel-default
+                .panel-body
+                  %h3 What happened?
+                  .form-horizontal{:role => "form"}
+                    = form_for @post, url: group_posts_path(@group), method: :post do |f|
+                      .form-group
+                        .col-md-12
+                          .input-group
+                            %span.input-group-addon
+                              %span.fa.fa-pencil
+                            = f.text_area :content, placeholder: "What's in your mind?", :rows => "1", class: "form-control"
+                      .form-group
+                        .col-md-12
+                          .pull-right
+                            = f.submit "Post", class: "btn btn-success"
+            - @posts.each do |post|
+              .row
+                .col-md-12
+                  .timeline.timeline-right
+                    .timeline-item.timeline-item-right
+                      .timeline-item-content
+                        .timeline-heading
+                          .user-name
+                            - if post.user.avatar.present?
+                              %img.avatar-user{ src:post.user.avatar.picture.thumb }
+                            - else
+                              %img.avatar-user{ src: asset_path("member.png") }
+                            = post.user.name
+                          = post.created_at.strftime("%F, %H:%M")
+                        .timeline-body
+                          %p
+                            = post.content
+                        .timeline-body.comments
+                          - post.comments.each do |comment|
+                            .comment-item
+                              - if comment.user.avatar.present?
+                                %img.avatar-user{ src: comment.user.avatar.picture.thumb }
+                              - else
+                                %img.avatar-user{ src: asset_path("member.png") }
+                              %p.comment-head
+                                = comment.user.name
+                              %p
+                                = comment.content
+                              %small.pull-right
+                                = comment.created_at.strftime("%F, %H:%M")
+                          .comment-write
+                            .row
+                              .col-md-1
+                                - if current_user.avatar.present?
+                                  %img.avatar-user{ src: current_user.avatar.picture.thumb }
+                                - else
+                                  %img.avatar-user{ src: asset_path("member.png") }
+                              .col-md-11
+                                = form_for @comment, url: group_post_comments_path(group_id: @group.id, post_id: post.id) do |f|
+                                  .form-group.col-md-10
+                                    = f.text_area :content, placeholder: "Write a comment", :rows => "1", class: "form-control"
+                                  .form-group.col-md-2
+                                    .pull-right
+                                      = f.submit "Post", class: "btn btn-success"
+    .col-md-3
+      .row
+        .panel.panel-primary
+          .list-group-item
+            .row
+              .col-md-3{ style: "padding-left: 5px;" }
+                %b
+                  Owner:
+              .col-md-3
+                - if @owner.avatar.present?
+                  %img.avatar-user{ src: @owner.avatar.picture.thumb }
+                - else
+                  %img.avatar-user{ src: asset_path("member.png") }
+              .col-md-4
+                %h4
+                  = link_to @owner.name, user_path(@owner)
+          .list-group-item
+            %b
+              Name:
+            = @group.name
+          .list-group-item
+            %b
+              Privacy:
+            = @group.kind
+          .list-group-item
+            %b
+              Created At:
+            = @group.created_at.strftime("%F")
+          .list-group-item
+            %b
+              Description:
+            = @group.description
+      - if current_user.belong_to_group?(@group)
+        .row
+          .panel.panel-default
+            .panel-heading
+              %center
+                %span.fa.fa-user-plus
+                %b Add your friends to group
+            .panel-body
+              %center
+                = form_tag(search_path(type: "friends"), :method => "get", role: "form", class: "search_friend") do
+                  = text_field_tag :search, params[:search], placeholder: "Search...", autocomplete: "off", class: "form-control"
+              .show_friend{ style: "padding-top: 10px;" }
+#edit_group.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "myModalLabel", :role => "dialog", :tabindex => "-1"}
+  .modal-dialog{:role => "document"}
+    .modal-content
+      .modal-header
+        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+          %span{"aria-hidden" => "true"} ×
+        %h4#myModalLabel.modal-title Update your group
+      .modal-body
+        .form-horizontal
+          = form_for @group do |f|
+            .form-group
+              .col-md-12
+                .title
+                  Group name
+                = f.text_field :name, placeholder: "#{ @group.name }" ,class: "form-control"
+            .form-group
+              .col-md-12
+                .title
+                  Cover
+                = f.file_field :cover, multiple: false, class: "file"
+            .form-group
+              .col-md-12
+                .title
+                  Description
+                = f.text_field :description, placeholder: "#{ @group.description }", class: "form-control"
+            .form-group
+              .col-md-12
+                .title
+                  Select Privacy of Group
+                = f.select :kind, [["Protected", "protected"], ["Private", "private"], ["Public", "public"]], selected: @group.kind, class: "btn btn-primary"
+            .form-group
+              .col-md-12
+                = f.submit "Save", class: "btn btn-success"
+
+:javascript
+  $("#edit").click(function() {
+    $("#edit_group").modal("show");
+  });
+  $(".search_friend").keyup(function() {
+    $(".show_friend").html("");
+    search_friend();
+  });
+
+  function search_friend() {
+    $.ajax({
+      url : "#{ search_path(type: "friends") }",
+      data : $("form.search_friend").serialize(),
+      success: function(data) {
+        var users = data["users"];
+
+        if (users != undefined) {
+          for (var i = 0; i < users.length; i++) {
+            html = "<div class='row'><a href='/add_user_to_group?user_id=" + users[i]["user"]["id"] + "&group_id=#{ @group.id }' data-method='POST' >";
+            if (users[i]["avatar"]) {
+              avatar_url = users[i]["avatar"];
+            } else {
+              avatar_url = "#{ asset_url('member.png') }";
+            }
+            html += "<div class='col-xs-3'><img class='avatar-group' src='" + avatar_url + "'/></div>";
+            html += "<div class='col-xs-6'>" + users[i]["user"]["name"] + "</div>";
+            html += "</a></div><br/>";
+            $(".show_friend").append(html);
+          }
+        }
+      }
+    });
+  }

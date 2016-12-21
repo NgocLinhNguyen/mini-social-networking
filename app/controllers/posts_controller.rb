@@ -41,9 +41,20 @@ class PostsController < ApplicationController
     )
     if @post.save
       flash[:success] = "Create new post successfully"
-      redirect_to user_path(current_user)
+      if params[:group_id].present?
+        @group = Group.find params[:group_id]
+        redirect_to group_path(@group)
+      else
+        redirect_to user_path(current_user)
+      end
     else
-      render "new"
+      flash[:danger] = "error"
+      if params[:group_id].present?
+        @group = Group.find params[:group_id]
+        redirect_to group_path(@group)
+      else
+        render "new"
+      end
     end
   end
 
