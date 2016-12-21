@@ -63,7 +63,7 @@
               = @user.birthday
             .list-group-item
               %b
-                #{ current_user.common_friend(@user) } common friends
+                #{ current_user.common_friends(@user).length } common friends
               .pull-right{ style: "margin-bottom: 10px;" }
                 - if current_user.following?(@user)
                   - if @user.following?(current_user)

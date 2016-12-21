@@ -25,35 +25,6 @@
 :javascript
   var element_want_change;
 
-  $(document).on("submit", ".new_comment", function() {
-    $(".new_comment").on("ajax:success", function(e, data, status, xhr) {
-      var html = "<div class='comment-item'>";
-      if (data["avatar"] != undefined) {
-        html += "<img class='avatar-user', src=" + data["avatar"] + " />";
-      }
-      else {
-        html += "<img class='avatar-user', src=#{ asset_path('member.png') } />";
-      }
-      html += "<p class='comment-head'> <a href = '/users/" + data["user"]["id"] + "' >" + data['user']['name'] + "</a></p>";
-      html += "<p>"
-      html += "<a class='like' data-remote='true' rel='nofollow' data-method='post' href='/likes?comment_id=" + data["comment"]["id"] + "&user_id=" + "#{ current_user.id }" + "'><span class='fa fa-thumbs-up'></span> Like</a>"
-      html += "<a class='liked hidden_like' data-remote='true' rel='nofollow' data-method='delete' href='/likes/delete%20post?comment_id=" + data["comment"]["id"] + "&user_id=" + "#{ current_user.id }" + "'><span class='fa fa-thumbs-up'></span> Like</a>"
-      html += "<span class='fa fa-diamond'></span>"
-      html += "<a href='#'> <span class='fa fa-thumbs-up'></span> <span id='number_like'> 0 </span> </a>"
-      html += "<span class='fa fa-diamond'></span>"
-      html += "<small class='text-muted'>" + data['create_time'] + "</small> </p>";
-      html += "<p>" + data['comment']['content'] + "</p>";
-      html += "</div>"
-      $(this).closest(".timeline-body.comments").children(".comment_preview").append(html);
-      $(this).find("textarea#comment_content").val("");
-      number_comment = $(this).closest(".timeline-item-content").find("#number_comment").text();
-      number_comment = parseInt(number_comment) + 1;
-      number_comment = $(this).closest(".timeline-item-content").find("#number_comment").text(number_comment);
-    }).on("ajax:error", function(e, xhr, status, error) {
-      $(this).append("<p>ERROR</p>");
-    });
-  });
-
   $(".read_more").click(function(){
     var element_need_handle = $(this).closest(".timeline-item-content").find(".comment_preview")
     if (element_need_handle.css("display") == "none") {

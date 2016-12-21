@@ -86,8 +86,10 @@ class User < ApplicationRecord
     self.following.include?(other_user)
   end
 
-  def common_friend(other_user)
-    return (self.active_friends & other_user.active_friends).length
+  def common_friends(other_user)
+    self_friends = self.get_friends
+    other_user_friends = other_user.get_friends
+    self_friends - (self_friends - other_user_friends)
   end
 
   def self.search(search)
@@ -96,5 +98,23 @@ class User < ApplicationRecord
 
   def is_owner? post
     post.user == self
+  end
+
+  def friends_active
+    id = self.id
+    User.joins("INNER JOIN friends ON users.id = friends.followed_id").where(
+      friends: { follower_id: id })
+  end
+
+  def friends_passive
+    id = self.id
+    User.joins("INNER JOIN friends ON users.id = friends.follower_id").where(
+      friends: { followed_id: id })
+  end
+
+  def get_friends
+    active = self.friends_active
+    passive = self.friends_passive
+    friends = active - (active - passive)
   end
 end
