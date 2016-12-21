@@ -8,7 +8,7 @@ class FriendsController < ApplicationController
       user = User.find index.followed_id
       @friends.push user
     end
-    @friends
+    @friends = @friends.paginate(page: params[:page], per_page: 8)
   end
 
   def create

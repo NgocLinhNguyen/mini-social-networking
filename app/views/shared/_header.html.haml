@@ -138,7 +138,13 @@
         var groups = data["groups"];
 
         if (users != undefined) {
-          for (var i = 0; i < users.length; i++) {
+          var length_user;
+          if (users.length < 3) {
+            length_user = users.length;
+          } else {
+            length_user = 3;
+          }
+          for (var i = 0; i < length_user; i++) {
             html = "<li><a href='/users/" + users[i]["user"]["id"] + "' style='padding: 15px 0px 0px 0px;'><div class='row'>";
             if (users[i]["avatar"]) {
               avatar_url = users[i]["avatar"];
@@ -154,7 +160,13 @@
         }
 
         if (groups != undefined) {
-          for (var j = 0; j < groups.length; j++) {
+          var length_group;
+          if (groups.length < 3) {
+            length_user = groups.length;
+          } else {
+            length_user = 3;
+          }
+          for (var j = 0; j < length_group; j++) {
             html = "<li><a href='/groups/" + groups[j]["group"]["id"] + "' ' style='padding: 15px 0px 0px 0px;'><div class='row'>";
             if (groups[j]["cover"]) {
               avatar_url = groups[j]["cover"];
