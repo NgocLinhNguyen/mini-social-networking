@@ -10,7 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161119153630) do
+ActiveRecord::Schema.define(version: 20161220084440) do
+
+  create_table "chat_rooms", force: :cascade do |t|
+    t.string   "title"
+    t.integer  "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_chat_rooms_on_user_id"
+  end
 
   create_table "comments", force: :cascade do |t|
     t.integer  "post_id"
@@ -28,6 +36,14 @@ ActiveRecord::Schema.define(version: 20161119153630) do
     t.string   "status"
   end
 
+  create_table "likes", force: :cascade do |t|
+    t.integer  "post_id"
+    t.integer  "comment_id"
+    t.integer  "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "posts", force: :cascade do |t|
     t.string   "content"
     t.string   "status"
@@ -35,6 +51,7 @@ ActiveRecord::Schema.define(version: 20161119153630) do
     t.integer  "group_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer  "image_id"
   end
 
   create_table "users", force: :cascade do |t|

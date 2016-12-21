@@ -14,8 +14,9 @@ class User < ApplicationRecord
   validates_length_of :password, in: 8..20, on: :create
   validates_length_of :password, in: 8..20, allow_nil: true, on: :update
 
-  has_many :posts
-  has_many :comments
+  has_many :posts, dependent: :destroy
+  has_many :comments, dependent: :destroy
+  has_many :likes, dependent: :destroy
 
   def generate_password_digest
     if password.present?
@@ -38,5 +39,15 @@ class User < ApplicationRecord
     if self.cover_id.present?
       return Image.find_by(id: self.cover_id, status: "active")
     end
+  end
+
+  def liked_post? post
+    like = Like.find_by(user_id: self.id, post_id: post.id)
+    return like.present?
+  end
+
+  def liked_comment? comment
+    like = Like.find_by(user_id: self.id, comment_id: comment.id)
+    return like.present?
   end
 end

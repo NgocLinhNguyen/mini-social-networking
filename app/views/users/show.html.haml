@@ -8,7 +8,7 @@
   .row
     .col-md-3
       .panel.panel-build
-        .panel-body.profile{ style: "background-image: #{ @user.cover.picture.thumb }"}
+        .panel-body.profile#profile_image
           .profile-image
             - if @user.avatar.present?
               %img{ src: @user.avatar.picture.thumb }
@@ -56,80 +56,9 @@
     .col-md-9
       .row
         .col-md-12
-          .panel.panel-default
-            .panel-body
-              %h3 What happened?
-              .form-horizontal{:role => "form"}
-                = form_for @post, url: user_posts_path(user_id: current_user.id) do |f|
-                  .form-group
-                    .col-md-12
-                      .input-group
-                        %span.input-group-addon
-                          %span.fa.fa-pencil
-                        = f.text_area :content, placeholder: "What's in your mind?", :rows => "1", class: "form-control"
-                  .form-group
-                    .col-md-12
-                      .btn-group.pull-left
-                        %button.btn.btn-primary
-                          %span.fa.fa-camera
-                        %button.btn.btn-primary
-                          %span.fa.fa-map-marker
-                        %button.btn.btn-primary
-                          %span.fa.fa-calendar
-                      .pull-right
-                        = f.submit "Post", class: "btn btn-success"
-      - @posts.each do |post|
-        .row
-          .col-md-12
-            .timeline.timeline-right
-              .timeline-item.timeline-item-right
-                .timeline-item-content
-                  .timeline-heading
-                    .user-name
-                      - if @user.avatar.present?
-                        %img{ src: @user.avatar.picture.thumb }
-                      - else
-                        %img.avatar-user{ src: asset_path("member.png") }
-                      = post.user.name
-                    = post.created_at.strftime("%F, %H:%M")
-                  .timeline-body
-                    %p
-                      = post.content
-                  .timeline-body.comments
-                    - post.comments.each do |comment|
-                      .comment-item
-                        - if @user.avatar.present?
-                          %img{ src: @user.avatar.picture.thumb }
-                        - else
-                          %img{ src: asset_path("member.png") }
-                        %p.comment-head
-                          = comment.user.name
-                        %p
-                          = comment.content
-                        %small.pull-right
-                          = comment.created_at.strftime("%F, %H:%M")
-                    .comment-write
-                      .row
-                        .col-md-1
-                          - if current_user.avatar.present?
-                            %img{ src: current_user.avatar.picture.thumb }
-                          - else
-                            %img.avatar-user{ src: asset_path("member.png") }
-                        .col-md-11
-                          = form_for @comment, url: user_post_comments_path(user_id: current_user.id, post_id: post.id) do |f|
-                            .form-group.col-md-10
-                              = f.text_area :content, placeholder: "Write a comment", :rows => "1", class: "form-control"
-                            .form-group.col-md-2
-                              .pull-right
-                                = f.submit "Post", class: "btn btn-success"
-                    .timeline-footer
-                      %a{:href => "#"} Read more
-                      .pull-right
-                        %a{:href => "#"}
-                          %span.fa.fa-comment
-                          35
-                        %a{:href => "#"}
-                          %span.fa.fa-share
+          = render "/shared/new_post", group_id: nil
+      = render "/shared/posts", posts: @posts
+
 #change-name.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "myModalLabel", :role => "dialog", :tabindex => "-1"}
   .modal-dialog{:role => "document"}
     .modal-content
@@ -184,6 +113,24 @@
             .form-group
               .col-md-12
                 = f.submit "Save", class: "btn btn-success"
+#change-avatar.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "myModalLabel", :role => "dialog", :tabindex => "-1"}
+  .modal-dialog{:role => "document"}
+    .modal-content
+      .modal-header
+        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+          %span{"aria-hidden" => "true"} ×
+        %h4#myModalLabel.modal-title Change your avatar
+      .modal-body
+        .form-horizontal
+          = form_for @user do |f|
+            .form-group
+              .col-md-12
+                .title
+                  Avatar
+                = f.file_field :avatar, multiple: false, class: "file"
+            .form-group
+              .col-md-12
+                = f.submit "Save", class: "btn btn-success"
 :javascript
   $("#name").click(function() {
     $("#change-name").modal("show");
@@ -197,42 +144,6 @@
     $("#change-birthday").modal("show");
   });
 
-
-#blueimp-gallery.blueimp-gallery.blueimp-gallery-controls
-  .slides
-  %h3.title
-  %a.prev ‹
-  %a.next ›
-  %a.close ×
-  %a.play-pause
-  %ol.indicator
-
-#mb-signout.message-box.animated.fadeIn{"data-sound" => "alert"}
-  .mb-container
-    .mb-middle
-      .mb-title
-        %span.fa.fa-sign-out
-        Log
-        %strong Out
-        ?
-      .mb-content
-        %p Are you sure you want to log out?
-        %p Press No if youwant to continue work. Press Yes to logout current user.
-      .mb-footer
-        .pull-right
-          %a.btn.btn-success.btn-lg{:href => "pages-login.html"} Yes
-          %button.btn.btn-default.btn-lg.mb-control-close No
-
-:javascript
-  document.getElementById('links').onclick = function (event) {
-      event = event || window.event;
-      var target = event.target || event.srcElement,
-          link = target.src ? target.parentNode : target,
-          options = {index: link, event: event,onclosed: function(){
-              setTimeout(function(){
-                  $("body").css("overflow","");
-              },200);
-          }},
-          links = this.getElementsByTagName('a');
-      blueimp.Gallery(links, options);
-  };
+  $("#profile_image").click(function() {
+    $("#change-avatar").modal("show");
+  });

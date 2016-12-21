@@ -1,0 +1,37 @@
+.panel.panel-default
+  .panel-body
+    %h3 What happened?
+    .form-horizontal{:role => "form"}
+      = form_for @post, url: user_posts_path(user_id: current_user.id) do |f|
+        .form-group
+          .col-md-12
+            .input-group
+              %span.input-group-addon
+                %span.fa.fa-pencil
+              = f.text_area :content, placeholder: "What's in your mind?", :rows => "1", class: "form-control"
+        - if group_id.present?
+          = f.hidden_field :group_id, value: group_id
+        .form-group
+          .col-md-12
+            .btn-group.pull-left
+              %label.btn.btn-primary.btn-file
+                %span.fa.fa-camera
+                = f.file_field :post_image, id: "post_image",multiple: false, onchange: "previewFile()"
+            .pull-right
+              = f.submit "Post", class: "btn btn-success"
+        %img.post_image_preview{ src: "" }
+:javascript
+  function previewFile() {
+    var preview = document.querySelector("img.post_image_preview");
+    var file    = document.querySelector("input#post_image").files[0];
+    var reader  = new FileReader();
+
+    reader.addEventListener("load", function () {
+      preview.src = reader.result;
+    }, false);
+
+    $("img.post_image_preview").show();
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  }

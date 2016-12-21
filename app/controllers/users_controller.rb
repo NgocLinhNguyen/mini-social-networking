@@ -5,9 +5,10 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find params[:id]
-    @posts = Post.filter_by_user(params[:id]).order(created_at: :desc)
+    @posts = Post.filter_by_user(params[:id]).order(created_at: :desc).limit(5)
     @post = Post.new
     @comment = Comment.new
+    @number_post = Post.filter_by_user(params[:id]).count
   end
 
   def new
