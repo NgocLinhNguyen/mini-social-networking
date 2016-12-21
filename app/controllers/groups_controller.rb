@@ -4,7 +4,7 @@ class GroupsController < ApplicationController
 
   def index
     if params[:type] == "yours"
-      @groups = Group.yours(current_user)
+      @groups = current_user.get_groups
     else
       @groups = Group.all
     end
@@ -14,7 +14,8 @@ class GroupsController < ApplicationController
   def show
     @group = Group.find params[:id]
     @owner = User.find @group.owner_id
-    @posts = @group.posts.order(created_at: :desc)
+    @posts = @group.posts.order(created_at: :desc).limit(5)
+    @number_post = @group.posts.count
     @post = Post.new(group_id: @group.id)
     @comment = Comment.new
   end

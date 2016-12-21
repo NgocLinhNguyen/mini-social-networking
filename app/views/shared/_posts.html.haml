@@ -111,7 +111,7 @@
         $.ajax({
           type: "GET",
           url: "#{ posts_path }",
-          data: { page: current_page, user_id: "#{ @user.id }" },
+          data: { page: current_page, user_id: "#{ @user.try(:id) }", group_id: "#{ @group.try(:id) }" },
           async: false,
           success: function(data) {
             if (data["posts_info"] != undefined) {

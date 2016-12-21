@@ -20,63 +20,50 @@ class CommentsController < ApplicationController
       post_id: params[:post_id],
       status: "active"
     )
-    if params[:group_id].present?
-      @group = Group.find params[:group_id]
-      if @comment.save
-        if @comment.user.avatar.present?
-          @avatar = @comment.user.avatar.picture.thumb.url
-        end
-        @time = @comment.created_at.strftime("%F, %H:%M")
-        respond_to do |format|
-          format.html {
-            flash[:success] = "Create your comment successfully"
-            redirect_to group_path(@group)
-          }
-          format.json
-        end
-      else
-        respond_to do |format|
-          format.html {
-            flash[:success] = "Create your comment fail"
-            redirect_to group_path(@group)
-          }
-          format.json { render json: ({ error: true }).to_json }
-        end
-      end
-    else
-      if @comment.save
-        post = Post.find params[:post_id]
-        arr_comment = post.comments.uniq{ |x| x.user_id }
-        arr_comment.each do |comment|
-          unless comment.user_id == current_user.id
+    if @comment.save
+      post = Post.find params[:post_id]
+      arr_user_id = post.comments.pluck(:user_id).uniq
+      arr_user_id = arr_user_id - [post.user_id]
+      unless arr_user_id.empty?
+        arr_user_id.each do |user_id|
+          unless user_id == current_user.id
             Notification.create(
               sender_id: current_user.id,
-              post_id: comment.post_id,
+              post_id: post.id,
               message: current_user.name + get_message("comment_post"),
-              user_id: comment.user_id,
+              user_id: user_id,
               status: "unread"
             )
           end
         end
-        if @comment.user.avatar.present?
-          @avatar = @comment.user.avatar.picture.thumb.url
-        end
-        @time = @comment.created_at.strftime("%F, %H:%M")
-        respond_to do |format|
-          format.html {
-            flash[:success] = "Create your comment successfully"
-            redirect_to user_post_path(user_id: current_user.id, id: params[:post_id])
-          }
-          format.json
-        end
-      else
-        respond_to do |format|
-          format.html {
-            flash[:success] = "Create your comment fail"
-            redirect_to user_post_path(user_id: current_user.id, id: params[:post_id])
-          }
-          format.json { render json: ({ error: true }).to_json }
-        end
+      end
+      if current_user != post.user
+        Notification.create(
+          sender_id: current_user.id,
+          post_id: post.id,
+          message: current_user.name + get_message("comment_post_on_post"),
+          user_id: post.user.id,
+          status: "unread"
+        )
+      end
+      if @comment.user.avatar.present?
+        @avatar = @comment.user.avatar.picture.thumb.url
+      end
+      @time = @comment.created_at.strftime("%F, %H:%M")
+      respond_to do |format|
+        format.html {
+          flash[:success] = "Create your comment successfully"
+          redirect_to user_post_path(user_id: current_user.id, id: params[:post_id])
+        }
+        format.json
+      end
+    else
+      respond_to do |format|
+        format.html {
+          flash[:success] = "Create your comment fail"
+          redirect_to user_post_path(user_id: current_user.id, id: params[:post_id])
+        }
+        format.json { render json: ({ error: true }).to_json }
       end
     end
   end
