@@ -41,6 +41,9 @@ class UsersController < ApplicationController
     if params[:user][:birthday].present?
       @user.update(birthday: params[:user][:birthday])
     end
+    if params[:user][:address].present?
+      @user.update(address: params[:user][:address])
+    end
     if params[:user][:avatar].present?
       if @user.avatar.present?
         @user.avatar.update(status: "deleted")
@@ -50,16 +53,6 @@ class UsersController < ApplicationController
         status: "active"
       )
       @user.update(avatar_id: avatar.id)
-    end
-    if params[:user][:cover].present?
-      if @user.cover.present?
-        @user.cover.update(status: "deleted")
-      end
-      cover = Image.create(
-        picture: params[:user][:cover],
-        status: "active"
-      )
-      @user.update(cover_id: cover.id)
     end
     redirect_to @user
     flash[:success] = "Success"

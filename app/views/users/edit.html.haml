@@ -36,13 +36,13 @@
               .form-group
                 .col-md-12
                   .title
-                    Avatar
-                  = f.file_field :avatar, multiple: false, class: "file"
+                    Your address
+                  = f.text_field :address, class: "form-control", placeholder: @user.address
               .form-group
                 .col-md-12
                   .title
-                    Cover
-                  = f.file_field :cover, multiple: false, class: "file"
+                    Avatar
+                  = f.file_field :avatar, multiple: false, class: "file"
               .form-group
                 .col-md-12
                   = f.submit "Save", class: "btn btn-success"

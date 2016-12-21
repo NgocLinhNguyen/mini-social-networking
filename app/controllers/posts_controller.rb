@@ -78,24 +78,28 @@ class PostsController < ApplicationController
   def update
     @post = Post.find params[:id]
     if params[:post][:content].present?
-      if @post.update(content: params[:post][:content])
-        flash[:success] = "Update your post successfully"
-        redirect_to user_post_path(current_user, @post)
-      end
+      @post.update(content: params[:post][:content])
+      @post_info = render_to_string(template: "shared/_post.html.haml", locals: { post: @post }, layout: false)
+      @message = "successfully"
+    else
+      @message = "error"
     end
+    respond_to :json
   end
 
   def destroy
     @post = Post.find params[:id]
-    if @post.update(status: "deleted")
-      flash[:success] = "Delete your post successfully"
-      redirect_to user_path(current_user)
-    end
+    @post.destroy()
+    respond_to :json
   end
 
   private
     def post_must_belongs_to_current_user
-      @user = User.find params[:user_id]
+      if params[:post].present?
+        @user = User.find params[:post][:user_id]
+      else
+        @user = User.find params[:user_id]
+      end
       @post = Post.find params[:id]
       unless @user.id == current_user.id || @post.user_id == current_user.id
         flash[:warning] = "Permission denied"

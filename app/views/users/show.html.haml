@@ -39,8 +39,16 @@
             .list-group-item
               %b
                 Birthday:
-              = @user.birthday
+              - if @user.birthday.present?
+                = @user.birthday.strftime("%d/%m/%Y")
               .pull-right#birthday
+                %a
+                  %span.fa.fa-edit
+            .list-group-item
+              %b
+                Address:
+              = @user.address
+              .pull-right#address
                 %a
                   %span.fa.fa-edit
         - else
@@ -70,7 +78,8 @@
     .col-md-9
       .row
         .col-md-12
-          = render "/shared/new_post", group_id: nil
+          - if is_current_user?
+            = render "/shared/new_post", group_id: nil
       = render "/shared/posts", posts: @posts
 
 #change-name.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "myModalLabel", :role => "dialog", :tabindex => "-1"}
@@ -127,6 +136,24 @@
             .form-group
               .col-md-12
                 = f.submit "Save", class: "btn btn-success"
+#change-address.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "myModalLabel", :role => "dialog", :tabindex => "-1"}
+  .modal-dialog{:role => "document"}
+    .modal-content
+      .modal-header
+        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+          %span{"aria-hidden" => "true"} ×
+        %h4#myModalLabel.modal-title Change your address
+      .modal-body
+        .form-horizontal
+          = form_for @user do |f|
+            .form-group
+              .col-md-12
+                .title
+                  Change your address
+                = f.text_field :address, class: "form-control", placeholder: @user.address
+            .form-group
+              .col-md-12
+                = f.submit "Save", class: "btn btn-success"
 #change-avatar.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "myModalLabel", :role => "dialog", :tabindex => "-1"}
   .modal-dialog{:role => "document"}
     .modal-content
@@ -156,6 +183,10 @@
 
   $("#birthday").click(function() {
     $("#change-birthday").modal("show");
+  });
+
+  $("#address").click(function() {
+    $("#change-address").modal("show");
   });
 
   $("#profile_image").click(function() {

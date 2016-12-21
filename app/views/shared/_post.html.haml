@@ -2,17 +2,25 @@
   .col-md-12
     .timeline.timeline-right
       .timeline-item.timeline-item-right
-        .timeline-item-content
+        .timeline-item-content{ id: "post_" + post.id.to_s }
           .timeline-heading
             .user-name
               - if post.user.avatar.present?
                 %img.avatar-user{ src: post.user.avatar.picture.thumb }
               - else
                 %img.avatar-user{ src: asset_path("member.png") }
-              = post.user.name
-            = post.created_at.strftime("%F, %H:%M")
+              %a.owner_name{ href: user_path(post.user), id: "owner_" + post.user.id.to_s }
+                = post.user.name
+              - if current_user.is_owner? post
+                .pull-right
+                  %a.edit_post_button{ href: "#" }
+                    %span.fa.fa-edit
+                  = link_to post_path(id: post.id, user_id: post.user.id), method: "delete", class: "destroy_post_button", data: { confirm: "You sure?" }, remote: true do
+                    %span.fa.fa-times
+            %small.text-muted
+              = post.created_at.strftime("%F, %H:%M")
           .timeline-body
-            %p
+            %p#show_content_post
               = post.content
             - if post.image.present?
               %img.post_image{ src: post.image.picture }
@@ -49,7 +57,8 @@
                   - else
                     %img.avatar-user{ src: asset_path("member.png") }
                   %p.comment-head
-                    = comment.user.name
+                    %a{ href: user_path(comment.user) }
+                      = comment.user.name
                   %p
                     - if current_user.liked_comment? comment
                       = link_to likes_path(user_id: current_user.id, comment_id: comment.id), method: :post, remote: true, class: "like hidden_like" do

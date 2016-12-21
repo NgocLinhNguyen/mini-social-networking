@@ -93,4 +93,8 @@ class User < ApplicationRecord
   def self.search(search)
     where("name LIKE ?", "%#{search}%")
   end
+
+  def is_owner? post
+    post.user == self
+  end
 end
