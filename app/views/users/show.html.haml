@@ -70,7 +70,8 @@
     .col-md-9
       .row
         .col-md-12
-          = render "/shared/new_post", group_id: nil
+          - if is_current_user?
+            = render "/shared/new_post", group_id: nil
       = render "/shared/posts", posts: @posts
 
 #change-name.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "myModalLabel", :role => "dialog", :tabindex => "-1"}
