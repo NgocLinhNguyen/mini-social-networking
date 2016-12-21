@@ -78,4 +78,7 @@ class User < ApplicationRecord
     return (self.active_friends & other_user.active_friends).length
   end
 
+  def self.search(search)
+    where("name LIKE ?", "%#{search}%")
+  end
 end

@@ -20,6 +20,6 @@ class PictureUploader < CarrierWave::Uploader::Base
   end
 
   version :cover do
-    process resize_to_fill: [200, 900]
+    process resize_to_fill: [900, 200]
   end
 end
