@@ -3,7 +3,8 @@ class UserGroupsController < ApplicationController
 
   def create
     @group = Group.find params[:group_id]
-    @user_group = UserGroup.new(user_id: current_user.id, group_id: @group.id, status: "active")
+    @user = User.find params[:user_id]
+    @user_group = UserGroup.new(user_id: @user.id, group_id: @group.id, status: "active")
     if @user_group.save
       redirect_to group_path(@group)
     else

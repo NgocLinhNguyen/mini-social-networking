@@ -15,4 +15,8 @@ class Group < ApplicationRecord
       return Image.find_by(id: self.cover_id, status: "active")
     end
   end
+
+  def self.search(search)
+    where("name LIKE ?", "%#{search}%")
+  end
 end

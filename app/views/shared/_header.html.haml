@@ -54,6 +54,10 @@
       %li.xn-icon-button
         %a.x-navigation-minimize{ href: "#"}
           %span.fa.fa-dedent
+      %li.xn-search.dropdown
+        = form_tag(search_path, :method => "get", role: "form", class: "search_all") do
+          = text_field_tag :search, params[:search], placeholder: "Search...", autocomplete: "off"
+        .panel.panel-default.animated.zoomIn.xn-drop-right.xn-panel-dragging.ui-draggable{ style: "padding-top: 10px;" }
       %li.xn-icon-button.pull-right
         %a.mb-control{ "data-box": "#mb-signout", href: "#" }
           %span.fa.fa-sign-out
@@ -81,3 +85,53 @@
           = link_to "Yes", logout_path, method: :delete, class: "btn btn-danger btn-lg"
           %button.btn.btn-default.btn-lg.mb-control-close
             No
+
+:javascript
+  $(".search_all").keyup(function() {
+    $(".panel.panel-default.animated.zoomIn.xn-drop-right.xn-panel-dragging.ui-draggable").html("");
+    search_all();
+  });
+
+  function search_all() {
+    $.ajax({
+      url : "#{ search_path }",
+      data : $("form.search_all").serialize(),
+      success: function(data) {
+        console.log(data)
+        var users = data["users"];
+        var groups = data["groups"];
+
+        if (users != undefined) {
+          for (var i = 0; i < users.length; i++) {
+            html = "<li><a href='/users/" + users[i]["user"]["id"] + "' style='padding: 15px 0px 0px 0px;'><div class='row'>";
+            if (users[i]["avatar"]) {
+              avatar_url = users[i]["avatar"];
+              console.log(avatar_url)
+            } else {
+              avatar_url = "#{ asset_url('member.png') }";
+            }
+            html += "<div class='col-xs-3'><img class='avatar-group' src='" + avatar_url + "' /></div>";
+            html += "<div class='col-xs-6'><p style='font-size: 18px;'>" + users[i]["user"]["name"] + "</p><small>User</small></div>";
+            html += "</div><br/></a></li>";
+            $(".panel.panel-default.animated.zoomIn.xn-drop-right.xn-panel-dragging.ui-draggable").append(html);
+          }
+        }
+
+        if (groups != undefined) {
+          for (var j = 0; j < groups.length; j++) {
+            html = "<li><a href='/groups/" + groups[j]["group"]["id"] + "' ' style='padding: 15px 0px 0px 0px;'><div class='row'>";
+            if (groups[j]["cover"]) {
+              avatar_url = groups[j]["cover"];
+            } else {
+              avatar_url = "#{ asset_url('group.png') }";
+            }
+            console.log(groups[j]["group"]["id"])
+            html += "<div class='col-xs-3'><img class='avatar-group' src='" + avatar_url + "' /></div>";
+            html += "<div class='col-xs-6'><p style='font-size: 18px;'>" + groups[j]["group"]["name"] + "</p><small>Group</small></div>";
+            html += "</div><br/></a></li>";
+            $(".panel.panel-default.animated.zoomIn.xn-drop-right.xn-panel-dragging.ui-draggable").append(html);
+          }
+        }
+      }
+    });
+  }

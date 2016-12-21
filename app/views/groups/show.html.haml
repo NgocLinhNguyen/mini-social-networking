@@ -20,7 +20,10 @@
   .row
     .col-md-9
       .panel.panel-default
-        .background-group#cover_background
+        - if @group.cover.present?
+          %img.group-cover{ src: @group.cover.picture.cover }
+        - else
+          %img.group-cover{ src: asset_path("group.png") }
       .panel.panel-default
         .panel-body
           .row
@@ -85,37 +88,49 @@
                                     .pull-right
                                       = f.submit "Post", class: "btn btn-success"
     .col-md-3
-      .panel.panel-primary
-        .list-group-item
-          .row
-            .col-md-3{ style: "padding-left: 5px;" }
-              %b
-                Owner:
-            .col-md-3
-              - if @owner.avatar.present?
-                %img.avatar-user{ src: @owner.avatar.picture.thumb }
-              - else
-                %img.avatar-user{ src: asset_path("member.png") }
-            .col-md-4
-              %h4
-                = link_to @owner.name, user_path(@owner)
-        .list-group-item
-          %b
-            Name:
-          = @group.name
-        .list-group-item
-          %b
-            Privacy:
-          = @group.kind
-        .list-group-item
-          %b
-            Created At:
-          = @group.created_at.strftime("%F")
-        .list-group-item
-          %b
-            Description:
-          = @group.description
-
+      .row
+        .panel.panel-primary
+          .list-group-item
+            .row
+              .col-md-3{ style: "padding-left: 5px;" }
+                %b
+                  Owner:
+              .col-md-3
+                - if @owner.avatar.present?
+                  %img.avatar-user{ src: @owner.avatar.picture.thumb }
+                - else
+                  %img.avatar-user{ src: asset_path("member.png") }
+              .col-md-4
+                %h4
+                  = link_to @owner.name, user_path(@owner)
+          .list-group-item
+            %b
+              Name:
+            = @group.name
+          .list-group-item
+            %b
+              Privacy:
+            = @group.kind
+          .list-group-item
+            %b
+              Created At:
+            = @group.created_at.strftime("%F")
+          .list-group-item
+            %b
+              Description:
+            = @group.description
+      - if current_user.belong_to_group?(@group)
+        .row
+          .panel.panel-default
+            .panel-heading
+              %center
+                %span.fa.fa-user-plus
+                %b Add your friends to group
+            .panel-body
+              %center
+                = form_tag(search_path(type: "friends"), :method => "get", role: "form", class: "search_friend") do
+                  = text_field_tag :search, params[:search], placeholder: "Search...", autocomplete: "off", class: "form-control"
+              .show_friend{ style: "padding-top: 10px;" }
 #edit_group.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "myModalLabel", :role => "dialog", :tabindex => "-1"}
   .modal-dialog{:role => "document"}
     .modal-content
@@ -154,13 +169,32 @@
   $("#edit").click(function() {
     $("#edit_group").modal("show");
   });
-  $(document).ready(function(){
-    var cover_url;
-    console.log(#{ @group.cover.present? });
-    if (#{ @group.cover.present? }) {
-      cover_url = "#{ @group.cover.try(:picture).try(:cover) }";
-    } else {
-      cover_url = "#{ asset_url("group.png") }";
-    }
-    $("#cover_background").css("background-image", "url(" + cover_url + ")");
+  $(".search_friend").keyup(function() {
+    $(".show_friend").html("");
+    search_friend();
   });
+
+  function search_friend() {
+    $.ajax({
+      url : "#{ search_path(type: "friends") }",
+      data : $("form.search_friend").serialize(),
+      success: function(data) {
+        var users = data["users"];
+
+        if (users != undefined) {
+          for (var i = 0; i < users.length; i++) {
+            html = "<div class='row'><a href='/add_user_to_group?user_id=" + users[i]["user"]["id"] + "&group_id=#{ @group.id }' data-method='POST' >";
+            if (users[i]["avatar"]) {
+              avatar_url = users[i]["avatar"];
+            } else {
+              avatar_url = "#{ asset_url('member.png') }";
+            }
+            html += "<div class='col-xs-3'><img class='avatar-group' src='" + avatar_url + "'/></div>";
+            html += "<div class='col-xs-6'>" + users[i]["user"]["name"] + "</div>";
+            html += "</a></div><br/>";
+            $(".show_friend").append(html);
+          }
+        }
+      }
+    });
+  }
