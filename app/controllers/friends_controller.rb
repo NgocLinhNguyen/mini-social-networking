@@ -2,13 +2,21 @@ class FriendsController < ApplicationController
   before_action :user_must_logged_in, only: [:index, :create, :update, :destroy]
 
   def index
-    @friends = Array.new
-    array = current_user.active_friends
-    array.each do |index|
-      user = User.find index.followed_id
-      @friends.push user
-    end
+    @friends = current_user.get_friends
     @friends = @friends.paginate(page: params[:page], per_page: 8)
+  end
+
+  def show
+    @user = User.find params[:user_id]
+    if params[:type] == "DeleteRequest"
+      @friend = Friend.find_by(followed_id: current_user.id, follower_id: @user.id)
+      if @friend.present?
+        @friend.destroy
+      end
+    else
+      current_user.follow(@user)
+    end
+    redirect_to user_path(@user)
   end
 
   def create
@@ -33,6 +41,11 @@ class FriendsController < ApplicationController
     elsif params[:type] == "Unfriend"
       current_user.unfollow(@user)
       @user.unfollow(current_user)
+    elsif params[:type] == "DeleteRequest"
+      @friend = Friend.find_by(followed_id: current_user.id, follower_id: @user.id)
+      if @friend.present?
+        @friend.destroy
+      end
     end
     redirect_to user_path(@user)
   end
