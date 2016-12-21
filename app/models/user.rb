@@ -17,7 +17,7 @@ class User < ApplicationRecord
   has_many :posts, dependent: :destroy
   has_many :comments, dependent: :destroy
   has_many :likes, dependent: :destroy
-  has_many :user_groups
+  has_many :user_groups, dependent: :destroy
   has_many :active_friends, class_name:  "Friend",
                             foreign_key: "follower_id",
                             dependent:   :destroy
@@ -26,6 +26,7 @@ class User < ApplicationRecord
                             dependent:   :destroy
   has_many :following, through: :active_friends, source: :followed
   has_many :followers, through: :passive_friends
+  has_many :notifications, dependent: :destroy
 
   default_scope { where(status: "active")}
 

@@ -43,6 +43,19 @@ class PostsController < ApplicationController
       flash[:success] = "Create new post successfully"
       if params[:group_id].present?
         @group = Group.find params[:group_id]
+        arr_user = @group.user_groups.uniq{ |x| x.user_id }
+        arr_user.each do |user|
+          unless user.id == current_user.id
+            Notification.create(
+              sender_id: current_user.id,
+              post_id: @post.id,
+              group_id: @group.id,
+              message: current_user.name + get_message("post_group") + @group.name,
+              user_id: user.id,
+              status: "unread"
+            )
+          end
+        end
         redirect_to group_path(@group)
       else
         redirect_to user_path(current_user)

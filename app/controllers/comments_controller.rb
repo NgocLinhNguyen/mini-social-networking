@@ -45,6 +45,19 @@ class CommentsController < ApplicationController
       end
     else
       if @comment.save
+        post = Post.find params[:post_id]
+        arr_comment = post.comments.uniq{ |x| x.user_id }
+        arr_comment.each do |comment|
+          unless comment.user_id == current_user.id
+            Notification.create(
+              sender_id: current_user.id,
+              post_id: comment.post_id,
+              message: current_user.name + get_message("comment_post"),
+              user_id: comment.user_id,
+              status: "unread"
+            )
+          end
+        end
         if @comment.user.avatar.present?
           @avatar = @comment.user.avatar.picture.thumb.url
         end

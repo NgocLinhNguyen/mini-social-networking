@@ -1,0 +1,41 @@
+%ul.breadcrumb
+  %li
+    %a{ href: "#" }
+      Home
+  %li.active
+    Notifications
+.page-content-wrap
+  .row
+    .col-md-10.col-md-offset-1
+      .panel.panel-default
+        .panel-heading
+          %h2
+            Your notifications
+            .pull-right{ style: "padding-right: 10px;" }
+              %a.btn.btn-danger{ href: notifications_read_path }
+                Mark all as read
+        .panel-body
+          .row
+            .col-md-12
+              - @notifications.each do |notification|
+                - if notification.status == "unread"
+                  .unread{ style: "background-color: #B6B6B6"}
+                    %a.list-group-item{ href: notification_path(notification_id: notification) }
+                      - if notification.get_sender.avatar.present?
+                        %img.pull-left.avatar-user{ src: notification.get_sender.avatar.picture.profile_normal }
+                      - else
+                        %img.pull-left.avatar-user{ src: asset_path("member.png")}
+                      %span.contacts-title
+                        = notification.get_sender.name
+                      %p
+                        = notification.message
+                - else
+                  %a.list-group-item{ href: notification_path(notification_id: notification) }
+                    - if notification.get_sender.avatar.present?
+                      %img.pull-left.avatar-user{ src: notification.get_sender.avatar.picture.profile_normal }
+                    - else
+                      %img.pull-left.avatar-user{ src: asset_path("member.png")}
+                    %span.contacts-title
+                      = notification.get_sender.name
+                    %p
+                      = notification.message
