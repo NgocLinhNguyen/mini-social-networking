@@ -11,6 +11,10 @@
                 %img.avatar-user{ src: asset_path("member.png") }
               %a.owner_name{ href: user_path(post.user), id: "owner_" + post.user.id.to_s }
                 = post.user.name
+              - if !@group.present? && post.group_id != nil
+                %span.fa.fa-caret-right
+                %a{ href: group_path(id: post.group) }
+                  = post.group.name
               - if current_user.is_owner? post
                 .pull-right
                   %a.edit_post_button{ href: "#" }

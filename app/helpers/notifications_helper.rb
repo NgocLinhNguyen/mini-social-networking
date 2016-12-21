@@ -1,7 +1,7 @@
 module NotificationsHelper
 
   def unread_notification
-    return current_user.notifications.unread
+    return current_user.notifications.unread.order(created_at: :desc)
   end
 
   def get_message type
@@ -12,6 +12,8 @@ module NotificationsHelper
       return " published a post in a group called "
     when "add_to_group"
       return " add you to a group called "
+    when "comment_post_on_post"
+      return "commented on your post."
     end
   end
 end

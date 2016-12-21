@@ -24,69 +24,10 @@
           %img.group-cover{ src: @group.cover.picture.cover }
         - else
           %img.group-cover{ src: asset_path("group.png") }
-      .panel.panel-default
-        .panel-body
-          .row
-            .col-md-12
-              .panel.panel-default
-                .panel-body
-                  %h3 What happened?
-                  .form-horizontal{:role => "form"}
-                    = form_for @post, url: group_posts_path(@group), method: :post do |f|
-                      .form-group
-                        .col-md-12
-                          .input-group
-                            %span.input-group-addon
-                              %span.fa.fa-pencil
-                            = f.text_area :content, placeholder: "What's in your mind?", :rows => "1", class: "form-control"
-                      .form-group
-                        .col-md-12
-                          .pull-right
-                            = f.submit "Post", class: "btn btn-success"
-            - @posts.each do |post|
-              .row
-                .col-md-12
-                  .timeline.timeline-right
-                    .timeline-item.timeline-item-right
-                      .timeline-item-content
-                        .timeline-heading
-                          .user-name
-                            - if post.user.avatar.present?
-                              %img.avatar-user{ src:post.user.avatar.picture.thumb }
-                            - else
-                              %img.avatar-user{ src: asset_path("member.png") }
-                            = post.user.name
-                          = post.created_at.strftime("%F, %H:%M")
-                        .timeline-body
-                          %p
-                            = post.content
-                        .timeline-body.comments
-                          - post.comments.each do |comment|
-                            .comment-item
-                              - if comment.user.avatar.present?
-                                %img.avatar-user{ src: comment.user.avatar.picture.thumb }
-                              - else
-                                %img.avatar-user{ src: asset_path("member.png") }
-                              %p.comment-head
-                                = comment.user.name
-                              %p
-                                = comment.content
-                              %small.pull-right
-                                = comment.created_at.strftime("%F, %H:%M")
-                          .comment-write
-                            .row
-                              .col-md-1
-                                - if current_user.avatar.present?
-                                  %img.avatar-user{ src: current_user.avatar.picture.thumb }
-                                - else
-                                  %img.avatar-user{ src: asset_path("member.png") }
-                              .col-md-11
-                                = form_for @comment, url: group_post_comments_path(group_id: @group.id, post_id: post.id) do |f|
-                                  .form-group.col-md-10
-                                    = f.text_area :content, placeholder: "Write a comment", :rows => "1", class: "form-control"
-                                  .form-group.col-md-2
-                                    .pull-right
-                                      = f.submit "Post", class: "btn btn-success"
+      .row
+        .col-md-12
+          = render "/shared/new_post", group_id: @group.id
+      = render "/shared/posts", posts: @posts
     .col-md-3
       .row
         .panel.panel-primary
