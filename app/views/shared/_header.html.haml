@@ -48,6 +48,11 @@
           %span.fa.fa-desktop
           %span.xn-text
             Your Friends
+      %li
+        %a{ href: notifications_path }
+          %span.fa.fa-desktop
+          %span.xn-text
+            Notifications
 
   .page-content
     %ul.x-navigation.x-navigation-horizontal.x-navigation-panel
@@ -59,8 +64,39 @@
           = text_field_tag :search, params[:search], placeholder: "Search...", autocomplete: "off"
         .panel.panel-default.animated.zoomIn.xn-drop-right.xn-panel-dragging.ui-draggable{ style: "padding-top: 10px;" }
       %li.xn-icon-button.pull-right
-        %a.mb-control{ "data-box": "#mb-signout", href: "#" }
+        %a.mb-control{"data-box" => "#mb-signout", :href => "#"}
           %span.fa.fa-sign-out
+      %li.xn-icon-button.pull-right
+        %a{ href: "#notifications" }
+          %span.fa.fa-bell
+        .informer.informer-danger
+          = unread_notification.count
+        .panel.panel-primary.animated.zoomIn.xn-drop-left.xn-panel-dragging
+          .panel-heading
+            %h3.panel-title
+              %span.fa.fa-bell
+              Notifications
+            .pull-right
+              %a{ href: notifications_read_path }
+                %span.label.label-danger #{ unread_notification.count } new
+          .panel-body.list-group.list-group-contacts.scroll{ style: "height: 200px;" }
+            - if unread_notification.count == 0
+              %br
+              %center You don't have new notification at this time!
+            - else
+              - unread_notification.each do |notification|
+                %a.list-group-item{ href: notification_path(notification_id: notification) }
+                  - if notification.get_sender.avatar.present?
+                    %img.pull-left{ src: notification.get_sender.avatar.picture.profile_normal }
+                  - else
+                    %img.pull-left{ src: asset_path("member.png")}
+                  %span.contacts-title
+                    = notification.get_sender.name
+                  %p
+                    = notification.message
+          .panel-footer.text-center
+            %a{ href: notifications_path } Show all messages
+
     #flash
       - flash.each do |name, msg|
         %div{ class: "alert alert-#{ name }" }

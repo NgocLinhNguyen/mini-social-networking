@@ -25,4 +25,7 @@ Rails.application.routes.draw do
   delete "remove_user_from_group", to: "user_groups#destroy"
   get "search", to: "search#index"
   resources :friends, only: [:index, :create, :update, :destroy]
+  resources :notifications, only: [:index]
+  get "notifications/read", to: "notifications#destroy"
+  get "notification", to: "notifications#update"
 end
