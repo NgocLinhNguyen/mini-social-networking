@@ -36,7 +36,8 @@
 }
 
 .post_image {
-  width: 300px;
+  width: 100%;
+  max-width: 300px;
 }
 
 .text-muted {
@@ -87,4 +88,23 @@ h2 {
 
 .alone {
   text-align: center;
+}
+
+.black-text {
+  color: #000000 !important;
+}
+
+.messages {
+  height: 97%;
+  border: solid 1px #d9d9d9;
+  border-radius: 5px;
+  padding: 20px 10px 0px 10px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.content-frame-right {
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
 }

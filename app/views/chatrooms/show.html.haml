@@ -1,0 +1,130 @@
+.content-frame
+  .content-frame-top
+    .page-title
+      %h2.black-text
+        %span.fa.fa-comments
+        Messages with #{ (@chatroom.partner current_user.id).name }
+    .pull-right
+      %button.btn.btn-danger
+        %span.fa.fa-book
+        Contacts
+      %button.btn.btn-default.content-frame-right-toggle
+        %span.fa.fa-bars
+  .content-frame-right
+    .list-group.list-group-contacts.border-bottom.push-down-10
+      - @chatrooms.each do |chatroom|
+        %a.list-group-item{ href: chatroom_path(id: chatroom.id) }
+          - partner = chatroom.partner current_user.id
+          - partner_avatar = partner.avatar.present? ? partner.avatar.picture.thumb : asset_path("member.png")
+          %img.pull-left{ alt: partner.name, src: partner_avatar }
+          %span.contacts-title{ id: "chatlist" + chatroom.id.to_s }
+            = partner.name
+            - if chatroom.inbox_unread(current_user.id) > 0
+              %span.label.label-danger{ id: "inbox_unread" + chatroom.id.to_s }
+                = chatroom.inbox_unread(current_user.id)
+          - last_message = chatroom.last_message
+          - if last_message.present?
+            %p
+              - if last_message.content.length > 20
+                = last_message.content[0..19] + "..."
+              - else
+                = last_message.content
+          - else
+            %p
+              %br
+  .content-frame-body.content-frame-body-left{ id: "chatbox" + @chatroom.id.to_s }
+    .messages.messages-img
+      - partner = @chatroom.partner current_user.id
+      - if @messages.empty?
+        %h3.text-center
+          = "You and  #{ partner.name }  have no conversations"
+      - else
+        = render "messages/messages", messages: @messages, partner: partner, load_more: false
+    .panel.panel-default.push-up-10
+      .panel-body.panel-body-search
+        .input-group
+          %input.form-control#new_message_content{ placeholder: "Your message...", type: "text" }
+          .input-group-btn
+            %button.btn.btn-default#send_message Send
+
+:javascript
+  var load_more_continue = true;
+  var number_messages = 15;
+  $("#send_message").click(function(){
+    var content = $("#new_message_content").val()
+    if (content != "") {
+      $.ajax({
+        url: "#{ messages_path }",
+        method: "POST",
+        data: {
+          content: content,
+          chatroom_id: #{ @chatroom.id }
+        },
+        success: function(data) {
+          console.log(data);
+        },
+        error: function( req, status, err ) {
+        }
+      })
+      var avatar = "#{ asset_path('member.png') }"
+      if (#{ current_user.avatar.present? }) {
+        avatar = "#{ current_user.avatar.try(:picture).try(:thumb) }"
+      }
+      var last_item_id = parseInt($($(".item").last()).attr("data-message-id"))
+      last_item_id += 1
+      var html = "<div class='item in item-visible' data-message-id='" + (last_item_id).toString() + "'>"
+      html += "<div class='image'>"
+      html += "<img src='" + avatar + "'/>"
+      html += "</div>"
+      html += "<div class='text'>"
+      html += "<div class='heading'>"
+      html += "<a href='#'>" + "#{ current_user.name }" + "</a>"
+      html += "<span class='date'>" + "#{ Time.now.to_s }" + "</span>"
+      html += "</div>"
+      html += content
+      html += "</div>"
+      html += "</div>"
+      if ($(".messages").find(".item").length == 0) {
+        $(".messages").html("");
+      }
+      $(".messages").append(html);
+      $("#new_message_content").val("");
+      scoll_to_bottom()
+    }
+  });
+
+  $(document).ready(function(){
+    setTimeout(function(){
+      scoll_to_bottom()
+    }, 0);
+  });
+
+  $(".messages").scroll(function() {
+    if (load_more_continue) {
+      if ($(this).prop("scrollTop") < 50) {
+        var first_message_id = $($(".item")[0]).attr("data-message-id")
+        load_more_continue = false
+        $.ajax({
+          url: "#{ messages_path }",
+          method: "GET",
+          data: {
+            first_message_id: first_message_id,
+            chatroom_id: #{ @chatroom.id }
+          },
+          success: function(data) {
+            $(".messages").prepend(data.messages_html);
+            if (data.number_messages < 10) {
+              number_messages = data.number_messages
+            }
+          },
+          error: function( req, status, err ) {
+          }
+        })
+      }
+      setTimeout(function(){
+        if (number_messages == 15) {
+          load_more_continue = true;
+        }
+      }, 1000);
+    }
+  });

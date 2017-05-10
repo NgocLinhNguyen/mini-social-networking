@@ -1,0 +1,48 @@
+- partner_avatar = partner.avatar.present? ? partner.avatar.picture.thumb : asset_path("member.png")
+- avatar = current_user.avatar.present? ? current_user.avatar.picture.thumb : asset_path("member.png")
+- messages.reverse.each do |message|
+  - if message.user_id == current_user.id
+    .item.in.item-visible{ "data-message-id": message.id }
+      .image
+        %img{ src: avatar }
+      .text
+        .heading
+          %a{ href: "#" }
+            = current_user.name
+          %span.date
+            = message.created_at.to_s
+        = message.content
+  - else
+    .item.item-visible{ "data-message-id": message.id }
+      .image
+        %img{ src: partner_avatar }
+      .text
+        .heading
+          %a{ href: "#" }
+            = partner.name
+          %span.date
+            = message.created_at.to_s
+        = message.content
+  / - else
+  /   - if message.user_id == current_user.id
+  /     .item.in{ "data-message-id": message.id }
+  /       .image
+  /         %img{ src: avatar }
+  /       .text
+  /         .heading
+  /           %a{ href: "#" }
+  /             = current_user.name
+  /           %span.date
+  /             = message.created_at.to_s
+  /         = message.content
+  /   - else
+  /     .item{ "data-message-id": message.id }
+  /       .image
+  /         %img{ src: partner_avatar }
+  /       .text
+  /         .heading
+  /           %a{ href: "#" }
+  /             = partner.name
+  /           %span.date
+  /             = message.created_at.to_s
+  /         = message.content

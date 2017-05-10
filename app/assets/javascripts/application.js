@@ -9,3 +9,4 @@
 //= require joli/js/plugins
 //= require joli/js/actions
 //= require joli/js/plugins/blueimp/jquery.blueimp-gallery.min
+//= require_tree ./channels

@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount ActionCable.server => '/cable'
+
   root "sessions#new"
 
   get "home", to: "home#index"
@@ -28,4 +30,6 @@ Rails.application.routes.draw do
   resources :notifications, only: [:index]
   get "notifications/read", to: "notifications#destroy"
   get "notification", to: "notifications#update"
+  resources :chatrooms
+  resources :messages
 end

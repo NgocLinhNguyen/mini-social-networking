@@ -48,13 +48,13 @@
                                 %h4
                                   = link_to "#{ user.name }", user_path(user)
                                 %small{ style: "font-style: italic; font-size: 11px;" }
-                                  #{ user.common_friend(current_user) } common friends
+                                  #{ user.common_friends(current_user).length } common friends
                               %td{ style: "width: 20%;" }
                                 - if current_user.following?(user)
                                   - if user.following?(current_user)
-                                    = link_to "Unfriend", friend_path(user_id: user.id, type: "Unfriend"), method: "delete", class: "btn btn-default"
+                                    = link_to "Unfriend", friend_path(user_id: user.id, type: "Unfriend", id: 0), method: "delete", class: "btn btn-default"
                                   - else
-                                    = link_to "Unfollow", friend_path(user_id: user.id, type: "Unfollow"), method: "delete", class: "btn btn-default"
+                                    = link_to "Unfollow", friend_path(user_id: user.id, type: "Unfollow", id: 0), method: "delete", class: "btn btn-default"
                                 - else
                                   - if user.following?(current_user)
                                     = link_to "Accept Friend", friend_path(user_id: user.id), method: "patch", class: "btn btn-success"

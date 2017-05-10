@@ -19,6 +19,7 @@
             %div{ class: "alert alert-#{ name }" }
               = msg
       = yield
+      = action_cable_meta_tag
 
 :javascript
   $(document).ready(function(){
@@ -31,3 +32,71 @@
     dataType: "json"
   })
 
+  App.messages = App.cable.subscriptions.create('MessagesChannel', {
+    received: function(data) {
+      if ($("#chatbox" + data.chatroom_id).length > 0) {
+        if ($(".messages").find(".item").length == 0) {
+          $(".messages").html("");
+        }
+        $(".messages").append(this.renderMessage(data));
+        scoll_to_bottom();
+      } else if ($("#chatlist" + data.chatroom_id).length > 0) {
+        var unread = $("#inbox_unread" + data.chatroom_id)
+        if (unread.length > 0) {
+          number_unread = parseInt(unread.html())
+          unread.html(number_unread + 1);
+        } else {
+          var html = "<span class='label label-danger' id='inbox_unread" + data.chatroom_id + "'>1</span>"
+          $("#chatlist" + data.chatroom_id).append(html)
+        }
+      } else {
+        var unread = $("#unread_message");
+        console.log(unread.length)
+        if (unread.length > 0) {
+          number_unread = parseInt(unread.html())
+          unread.html(number_unread + 1);
+        } else {
+          var html = "<div class='informer informer-danger' id='unread_message'>1</div>"
+          $("#messages_link").append(html)
+        }
+      }
+    },
+
+    renderMessage: function(data) {
+      $.ajax({
+        url: "#{ message_path(id: 0) }",
+        method: "PATCH",
+        data: {
+          chatroom_id: data.chatroom_id
+        },
+        success: function(data) {
+          console.log(data);
+        },
+        error: function( req, status, err ) {
+        }
+      })
+
+      var avatar = "#{ asset_path('member.png') }"
+      if (data.avatar != "no_avatar") {
+        avatar = data.avatar
+      }
+      var html = "<div class='item item-visible' data-message-id='" + data.message_id + "'>"
+      html += "<div class='image'>"
+      html += "<img src='" + avatar + "'/>"
+      html += "</div>"
+      html += "<div class='text'>"
+      html += "<div class='heading'>"
+      html += "<a href='#'>" + data.received_name + "</a>"
+      html += "<span class='date'>" +  data.created_at + "</span>"
+      html += "</div>"
+      html += data.content
+      html += "</div>"
+      html += "</div>"
+      return html;
+    }
+  });
+
+  function scoll_to_bottom() {
+    var messages_box = $(".messages");
+    messages_box.scrollTop(messages_box.prop("scrollHeight"));
+  }
