@@ -30,30 +30,32 @@
         Navigation
       %li
         %a{ href: user_path(current_user) }
-          %span.fa.fa-desktop
+          %span.fa.fa-info
           %span.xn-text
             = current_user.name
       %li
         %a{ href: groups_path(type: "all") }
-          %span.fa.fa-desktop
+          %span.fa.fa-users
           %span.xn-text
             All Groups
       %li
-        %a{ href: groups_path(type: "yours") }
-          %span.fa.fa-desktop
+        %a#messages_link{ href: chatrooms_path }
+          %span.fa.fa-comments
           %span.xn-text
-            Your Groups
+            Messages
+          - if number_message_unread > 0
+            #unread_message.informer.informer-danger
+              = number_message_unread
       %li
         %a{ href: friends_path }
-          %span.fa.fa-desktop
+          %span.fa.fa-book
           %span.xn-text
             Your Friends
       %li
         %a{ href: notifications_path }
-          %span.fa.fa-desktop
+          %span.fa.fa-bell
           %span.xn-text
             Notifications
-
   .page-content
     %ul.x-navigation.x-navigation-horizontal.x-navigation-panel
       %li.xn-icon-button

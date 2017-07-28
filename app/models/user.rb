@@ -27,6 +27,8 @@ class User < ApplicationRecord
   has_many :following, through: :active_friends, source: :followed
   has_many :followers, through: :passive_friends
   has_many :notifications, dependent: :destroy
+  has_many :chatroom_users
+  has_many :chatrooms, through: :chatroom_users
 
   default_scope { where(status: "active")}
 

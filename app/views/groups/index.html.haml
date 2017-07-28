@@ -15,6 +15,10 @@
           %h3.panel-title
             Group
           .pull-right#new
+            - if params[:type] == "all"
+              %a.btn.btn-info{ href: groups_path(type: "yours") }
+                %span.fa.fa-users
+                Your Group
             %a.btn.btn-success{ href: "#new_group" }
               %span.fa.fa-plus
               New Group

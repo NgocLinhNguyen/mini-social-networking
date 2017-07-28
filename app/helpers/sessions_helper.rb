@@ -1,6 +1,7 @@
 module SessionsHelper
   def log_in user
     session[:user_id] = user.id
+    cookies.signed[:user_id] = current_user.id
   end
 
   def current_user

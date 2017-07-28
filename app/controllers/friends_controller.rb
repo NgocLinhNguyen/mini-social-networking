@@ -28,11 +28,26 @@ class FriendsController < ApplicationController
   def update
     @user = User.find params[:user_id]
     current_user.follow(@user)
+    chatroom = Chatroom.create(
+      status: "active",
+      last_message_at: Time.now,
+      chatroom_users_attributes: [
+        { user_id: current_user.id, status: "active" },
+        { user_id: @user.id, status: "active" }
+      ]
+    )
     redirect_to user_path(@user)
   end
 
   def destroy
     @user = User.find params[:user_id]
+    chatroom_user = ChatroomUser.find_by(user_id: @user.id, status: "active")
+    if chatroom_user.present?
+      chatroom_user.update(status: "deleted")
+      chatroom_user = ChatroomUser.find_by(user_id: current_user.id, status: "active")
+      chatroom_user.update(status: "deleted")
+      chatroom_user.chatroom.update(status: "deleted")
+    end
     if params[:type] == "Unfollow"
       @friend = Friend.find_by(follower_id: current_user.id, followed_id: @user.id)
       if @friend.present?
